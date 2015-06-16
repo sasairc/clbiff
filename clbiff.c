@@ -150,7 +150,7 @@ char** str_to_args(char* str)
         }
     }
 
-    if (elmc > 1) {
+    if (elmc >= 1) {
         args = (char**)malloc(sizeof(char*) * (elmc + 1));
         if (args == NULL)
             return NULL;
