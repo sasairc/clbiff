@@ -21,6 +21,8 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 
 int hflag = 0;  /* monitor() loop flag */
@@ -147,6 +149,8 @@ int exec_cmd(char** args, int vflag)
 {
     pid_t   pid;
 
+    handl_zombie_proc();    /* prevention zombie process */
+
     /*
      *  pid = 0: child process
      *  pid > 0: parent process
@@ -160,14 +164,24 @@ int exec_cmd(char** args, int vflag)
             fprintf(stdout, "%s[%d]: exec %s\n", PROGNAME, getpid(), args[0]);
         /* exec proccess */
         execvp(args[0], args);
-
         /* do error */
         fprintf(stderr, "%s[%d]: exec %s failure\n", PROGNAME, getpid(), args[0]);
 
-        return errno;
+        exit(errno);
     }
 
     return 0;
+}
+
+void handl_zombie_proc(void)
+{
+    struct  sigaction sa;
+    sa.sa_handler   = SIG_IGN;
+    sa.sa_flags     = SA_NOCLDWAIT;
+
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+        exit(1);
+    }
 }
 
 int set_signal(int sig)

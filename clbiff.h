@@ -27,8 +27,9 @@ typedef struct CLBIFF_T {
 
 extern int monitor(clbiff_t* cl_t);
 extern int exec_cmd(char** args, int vflag);
-extern void release(char** cl_t);
+extern void handl_zombie_proc(void);
 extern int set_signal(int sig);
 extern void catch_signal(int sig);
+extern void release(char** cl_t);
 
 #endif
