@@ -19,10 +19,8 @@
 #define AUTHOR          "sasairc"
 #define MAIL_TO         "sasairc@ssiserver.moe.hm"
 
-//#define   DEBUG
-
 #define DEFAULT_INBOX   "/home/sasai/Mail/inbox"
 #define DEFAULT_TMSEC   30
-#define DEFAULT_EXEC    "eject"
+#define DEFAULT_EXEC    "yasuna"
 
 #endif
