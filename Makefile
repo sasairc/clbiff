@@ -14,7 +14,7 @@ CC	:= cc
 RM	:= rm
 CFLAGS	:= -O2 -g -Wall -fno-strict-aliasing
 LDFLAGS	:=
-SRCS	= clbiff.c
+SRCS	= clbiff.c subset.c file.c memory.c
 OBJS	= $(SRCS:.c=.o)
 
 all: $(TARGET) $(OBJS)
@@ -30,6 +30,15 @@ $(TARGET): $(OBJS)
 
 clbiff.o: clbiff.c
 	$(CC) $(DEFCFLAGS) $(CFLAGS) -c clbiff.c -o clbiff.o
+
+subset.o: subset.c
+	$(CC) $(DEFCFLAGS) $(CFLAGS) -c subset.c -o subset.o
+
+file.o: file.c
+	$(CC) $(DEFCFLAGS) $(CFLAGS) -c file.c -o file.o
+
+memory.o: memory.c
+	$(CC) $(DEFCFLAGS) $(CFLAGS) -c memory.c -o memory.o
 
 install-bin: $(TARGET)
 	install -pd $(BINDIR)
