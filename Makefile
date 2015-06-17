@@ -44,10 +44,6 @@ install-bin: $(TARGET)
 	install -pd $(BINDIR)
 	install -pm 755 $(TARGET) $(BINDIR)/
 
-install-cows:
-	install -pd $(COWPATH)
-	install -pm 644 ./cows/* $(COWPATH)/
-
 install: install-bin
 
 .PHONY: clean
