@@ -1,7 +1,7 @@
 /*
  * clbiff -  simple mail notify program
  *
- * config.h
+ * subset.h
  *
  * Copyright (c) 2015 sasairc
  * This work is free. You can redistribute it and/or modify it under the
@@ -10,19 +10,15 @@
  * for more details.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef SUBSET_H
+#define SUBSET_H
 
-#define PROGNAME        "clbiff"
-#define VERSION         0
-#define PATCHLEVEL      1
-#define AUTHOR          "sasairc"
-#define MAIL_TO         "sasairc@ssiserver.moe.hm"
+#include "./clbiff.h"
 
-//#define   DEBUG
-
-#define DEFAULT_INBOX   "/home/sasai/Mail/inbox"
-#define DEFAULT_TMSEC   30
-#define DEFAULT_EXEC    "eject"
+extern char** str_to_args(char* str);
+extern int check_file_stat(char* path);
+extern int print_start_msg(clbiff_t* clb);
+extern int print_usage(void);
+extern int print_version(void);
 
 #endif

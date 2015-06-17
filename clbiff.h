@@ -14,23 +14,21 @@
 #define CLBIFF_H
 
 typedef struct CLBIFF_T {
-    int     tflag;
-    int     bflag;
-    int     eflag;
+    int     iflag;
+    int     fflag;
+    int     cflag;
     int     qflag;
     int     vflag;
-    int     targ;
-    char*   barg;
-    char*   earg;
+    int     iarg;
+    char*   farg;
+    char*   carg;
     char**  args;
 } clbiff_t;
 
 extern int monitor(clbiff_t* cl_t);
 extern int exec_cmd(char** args, int vflag);
-extern char** str_to_args(char* str);
-//extern int set_signal(int sig);
-//extern void catch_signal(int sig);
-extern int print_usage(void);
-extern int print_version(void);
+extern void release(char** cl_t);
+extern int set_signal(int sig);
+extern void catch_signal(int sig);
 
 #endif

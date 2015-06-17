@@ -1,7 +1,7 @@
 /*
  * clbiff -  simple mail notify program
  *
- * config.h
+ * memory.h
  *
  * Copyright (c) 2015 sasairc
  * This work is free. You can redistribute it and/or modify it under the
@@ -10,19 +10,12 @@
  * for more details.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef MEMORY_H
+#define MEMORY_H
 
-#define PROGNAME        "clbiff"
-#define VERSION         0
-#define PATCHLEVEL      1
-#define AUTHOR          "sasairc"
-#define MAIL_TO         "sasairc@ssiserver.moe.hm"
-
-//#define   DEBUG
-
-#define DEFAULT_INBOX   "/home/sasai/Mail/inbox"
-#define DEFAULT_TMSEC   30
-#define DEFAULT_EXEC    "eject"
+/* This functions is required memory.c */
+extern char** malloc2d(int x, int y);
+extern int init2d(char** buf, int x, int y);
+extern void free2d(char** buf, int y);
 
 #endif
