@@ -21,6 +21,6 @@
 
 #define DEFAULT_INBOX   "/home/sasai/Mail/inbox"
 #define DEFAULT_TMSEC   30
-#define DEFAULT_EXEC    "yasuna"
+#define DEFAULT_EXEC    "eject"
 
 #endif

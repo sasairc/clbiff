@@ -134,7 +134,7 @@ command  = %s\n\
 int print_usage(void)
 {
     fprintf(stdout, "\
-%s %d.%d, simple mail notify programn\n\
+%s %d.%d, simple mail notify program\n\
 Usage: clbiff [OPTION]...\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
