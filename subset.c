@@ -36,6 +36,7 @@ int check_file_stat(char* path)
     return 0;
 }
 
+#ifndef WITH_USLEEP
 int print_start_msg(clbiff_t* cl_t)
 {
     fprintf(stdout, "%s %d.%d\n", PROGNAME, VERSION, PATCHLEVEL);
@@ -48,7 +49,22 @@ command  = %s\n\
 
     return 0;
 }
+#else
+int print_start_msg(clbiff_t* cl_t)
+{
+    fprintf(stdout, "%s %d.%d\n", PROGNAME, VERSION, PATCHLEVEL);
+    fprintf(stdout, "\
+pid      = %d\n\
+file     = %s\n\
+interval = %d usec\n\
+command  = %s\n\
+", getpid(), cl_t->farg, cl_t->iarg, cl_t->carg);
 
+    return 0;
+}
+#endif
+
+#ifndef WITH_USLEEP
 int print_usage(void)
 {
     fprintf(stdout, "\
@@ -71,6 +87,30 @@ Report %s bugs to %s <%s>\n\
 
     exit(0);
 }
+#else
+int print_usage(void)
+{
+    fprintf(stdout, "\
+%s %d.%d, simple mail notify program with usleep\n\
+Usage: clbiff [OPTION]...\n\
+\n\
+Mandatory arguments to long options are mandatory for short options too.\n\
+\n\
+  -i,  --interval=USECONDS   interval time (usec)\n\
+  -c,  --command=COMMAND     specifies command\n\
+  -f,  --file=file           monitored file\n\
+  -q,  --quiet               quiet mode\n\
+  -v,  --verbose             verbose mode\n\
+\n\
+       --help                display this help and exit\n\
+       --version             output version infomation and exit\n\
+\n\
+Report %s bugs to %s <%s>\n\
+", PROGNAME, VERSION, PATCHLEVEL, PROGNAME, AUTHOR, MAIL_TO);
+
+    exit(0);
+}
+#endif
 
 int print_version(void)
 {

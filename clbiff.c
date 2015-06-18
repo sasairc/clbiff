@@ -129,9 +129,11 @@ int monitor(clbiff_t* cl_t)
 
             return errno;
         }
-
+#ifndef WITH_USLEEP
         sleep(cl_t->iarg);
-
+#else
+        usleep(cl_t->iarg);
+#endif
         if (stat(cl_t->farg, &stat_ago) != 0) {
             fprintf(stderr, "%s[%d]: stat() failure\n", PROGNAME, getpid());
             release(cl_t->args);
