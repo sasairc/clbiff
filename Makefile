@@ -14,7 +14,7 @@ CC	:= cc
 RM	:= rm
 CFLAGS	:= -O2 -g -Wall -fno-strict-aliasing
 LDFLAGS	:=
-SRCS	= clbiff.c subset.c file.c memory.c
+SRCS	= clbiff.c subset.c signal.c string.c file.c memory.c
 OBJS	= $(SRCS:.c=.o)
 
 all: $(TARGET) $(OBJS)
@@ -33,6 +33,12 @@ clbiff.o: clbiff.c
 
 subset.o: subset.c
 	$(CC) $(DEFCFLAGS) $(CFLAGS) -c subset.c -o subset.o
+
+signal.o: signal.c
+	$(CC) $(DEFCFLAGS) $(CFLAGS) -c signal.c -o signal.o
+
+string.o: string.c
+	$(CC) $(DEFCFLAGS) $(CFLAGS) -c string.c -o string.o
 
 file.o: file.c
 	$(CC) $(DEFCFLAGS) $(CFLAGS) -c file.c -o file.o
