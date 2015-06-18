@@ -1,7 +1,7 @@
 /*
  * clbiff -  simple mail notify program
  *
- * subset.h
+ * signal.h 
  *
  * Copyright (c) 2015 sasairc
  * This work is free. You can redistribute it and/or modify it under the
@@ -10,16 +10,17 @@
  * for more details.
  */
 
-#ifndef SUBSET_H
-#define SUBSET_H
+#ifndef SIGNAL_H
+#define SIGNAL_H
 
-#include "./clbiff.h"
+typedef struct SIGLIST_T {
+    int     sig;
+    void    (*func)(int sig);
+} siglist_t;
 
-/* This functions is required subset.c */
-extern char** str_to_args(char* str);
-extern int check_file_stat(char* path);
-extern int print_start_msg(clbiff_t* clb);
-extern int print_usage(void);
-extern int print_version(void);
+/* This functions is required signal.c */
+extern int set_signal(int sig, void (*func)(int sig));
+extern int set_signal_siglist(siglist_t* siglist);
+extern void handl_zombie_proc(void);
 
 #endif

@@ -13,6 +13,7 @@
 #include "./config.h"
 #include "./clbiff.h"
 #include "./subset.h"
+#include "./signal.h"
 #include "./file.h"
 #include "./memory.h"
 #include <errno.h>
@@ -21,8 +22,6 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <sys/stat.h>
 
 int hflag = 0;  /* monitor() loop flag */
@@ -47,10 +46,18 @@ int main(int argc, char* argv[])
         {"version",     no_argument,        NULL,  1 },
         {0, 0, 0, 0},
     };
+
     /* setting signal handler */
-    if (set_signal(SIGINT) != 0 || set_signal(SIGTERM) != 0) {
+    siglist_t siglist[] = {
+        {SIGINT,    catch_signal},
+        {SIGTERM,   catch_signal},
+        {0,         NULL},
+    };
+    if (set_signal_siglist(siglist) != 0) {
+        fprintf(stderr, "%s[%d] set_signal_siglist() failure\n", PROGNAME, getpid());
+
         return 1;
-    }
+    };
     /* procssing of arguments */
     while ((res = getopt_long(argc, argv, "i:f:c:qv", opts, &index)) != -1) {
         switch (res) {
@@ -100,8 +107,9 @@ int main(int argc, char* argv[])
         print_start_msg(&cl_t);
     }
     /* str to array */
-    if ((cl_t.args = str_to_args(cl_t.carg)) == NULL)
+    if ((cl_t.args = str_to_args(cl_t.carg)) == NULL) { 
         return 3;
+    }
     /* prevention zombie process */
     handl_zombie_proc();
 
@@ -168,29 +176,6 @@ int exec_cmd(char** args, int vflag)
         fprintf(stderr, "%s[%d]: exec %s failure\n", PROGNAME, getpid(), args[0]);
 
         exit(errno);
-    }
-
-    return 0;
-}
-
-void handl_zombie_proc(void)
-{
-    struct  sigaction sa;
-
-    sa.sa_handler   = SIG_IGN;
-    sa.sa_flags     = SA_NOCLDWAIT;
-
-    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-        exit(1);
-    }
-}
-
-int set_signal(int sig)
-{
-    if (signal(sig, catch_signal) == SIG_ERR) {
-        fprintf(stderr, "%s[%d]: set_signal() failure\n", PROGNAME, getpid());
-
-        return 1;
     }
 
     return 0;
