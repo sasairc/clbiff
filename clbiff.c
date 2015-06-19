@@ -15,7 +15,9 @@
 #include "./subset.h"
 #include "./signal.h"
 #include "./file.h"
+#include "./string.h"
 #include "./memory.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,7 +56,7 @@ int main(int argc, char* argv[])
         {0,         NULL},
     };
     if (set_signal_siglist(siglist) != 0) {
-        fprintf(stderr, "%s[%d] set_signal_siglist() failure\n", PROGNAME, getpid());
+        print_msg(2, stderr, "set_signal_siglist() failure\n");
 
         return 1;
     };
@@ -124,7 +126,7 @@ int monitor(clbiff_t* cl_t)
 
     while (hflag == 0) {
         if (stat(cl_t->farg, &stat_now) != 0) {
-            fprintf(stderr, "%s[%d]: stat() failure\n", PROGNAME, getpid());
+            print_msg(2, stderr, "stat()failure\n");
             release(cl_t->args);
 
             return errno;
@@ -135,12 +137,11 @@ int monitor(clbiff_t* cl_t)
         usleep(cl_t->iarg);
 #endif
         if (stat(cl_t->farg, &stat_ago) != 0) {
-            fprintf(stderr, "%s[%d]: stat() failure\n", PROGNAME, getpid());
+            print_msg(2, stderr, "stat()failure\n");
             release(cl_t->args);
 
             return errno;
         }
-
         if (stat_now.st_mtime != stat_ago.st_mtime) {
             if ((e_errno = exec_cmd(cl_t->args, cl_t->vflag)) > 0) {
 
@@ -149,8 +150,13 @@ int monitor(clbiff_t* cl_t)
         }
     }
 
+    /* interrupt handling */
     if (cl_t->vflag) {
-        fprintf(stdout, "%s[%d] exiting on signal %d\n", PROGNAME, getpid(), hflag);
+        fprintf(
+                stdout,
+                "\n%s[%d]: exiting on signal %d\n",
+                PROGNAME, getpid(), hflag
+        );
     }
     release(cl_t->args);    /* release memory */
 
@@ -166,16 +172,16 @@ int exec_cmd(char** args, int vflag)
      *  pid > 0: parent process
      */
     if ((pid = fork()) < 0) {
-        fprintf(stderr, "%s[%d]: fork() on exec_cmd() falure\n", PROGNAME, getpid());
+        print_msg(2, stderr, "fork() on exec_cmd() failure\n");
 
         return errno;
     } else if (pid == 0) {
         if (vflag == 1)
-            fprintf(stdout, "%s[%d]: exec %s\n", PROGNAME, getpid(), args[0]);
+            print_msg(4, stdout, "exec ", args[0], "\n");
         /* exec proccess */
         execvp(args[0], args);
         /* do error */
-        fprintf(stderr, "%s[%d]: exec %s failure\n", PROGNAME, getpid(), args[0]);
+        print_msg(4, stderr, "exec ", args[0], " failure\n");
 
         exit(errno);
     }
@@ -190,7 +196,6 @@ void catch_signal(int sig)
 
 void release(char** args)
 {
-
 #ifdef  DEBUG
     int i;
 

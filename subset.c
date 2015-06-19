@@ -15,6 +15,7 @@
 #include "./clbiff.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <sys/stat.h>
 
@@ -32,6 +33,41 @@ int check_file_stat(char* path)
 
         return 2;
     }
+
+    return 0;
+}
+
+int print_msg(int argnum, ...)
+{
+    int     i;
+    char*   str;
+    FILE*   fp;
+    va_list list;           /* list of variable arguments */
+
+    /* processing of variable arguments */
+    va_start(list, argnum);
+
+    fp = va_arg(list, FILE*);
+    for(i = 0; i < argnum; i++) {
+        switch (i) {
+            case    0:
+#ifdef  WITH_ADD_INFO
+                if (fp == stdout) {
+                    fprintf(fp, "[INFO]: %s[%d]: ", PROGNAME, getpid());
+                } else if (fp == stderr) {
+                    fprintf(fp, "[WARN]: %s[%d]: ", PROGNAME, getpid());
+                }
+#else
+                fprintf(fp, "%s[%d]: ", PROGNAME, getpid());
+#endif
+                break;
+            default:
+                str = va_arg(list, char*);
+                fprintf(fp, "%s", str);
+                continue;
+        }
+    }
+    va_end(list);
 
     return 0;
 }
