@@ -14,10 +14,11 @@
 #define SUBSET_H
 
 #include "./clbiff.h"
+#include <stdio.h>
 
 /* This functions is required subset.c */
-extern char** str_to_args(char* str);
 extern int check_file_stat(char* path);
+extern int print_msg(int argnum, ...);
 extern int print_start_msg(clbiff_t* clb);
 extern int print_usage(void);
 extern int print_version(void);
