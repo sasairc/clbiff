@@ -39,9 +39,9 @@ int check_file_stat(char* path)
 
 int print_msg(int argnum, ...)
 {
-    int     i;
-    char*   str;
-    FILE*   fp;
+    int     i   = 0;
+    char*   str = NULL;
+    FILE*   fp  = NULL;
     va_list list;           /* list of variable arguments */
 
     /* processing of variable arguments */
@@ -150,7 +150,7 @@ Report %s bugs to %s <%s>\n\
 
 int print_version(void)
 {
-    fprintf(stdout, "%s %d.%d\n", PROGNAME, VERSION, PATCHLEVEL);
+    fprintf(stdout, "%s %d.%d (%s)\n", PROGNAME, VERSION, PATCHLEVEL, ARCH);
 
     exit(0);
 }

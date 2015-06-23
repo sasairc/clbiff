@@ -17,7 +17,6 @@
 #include "./file.h"
 #include "./string.h"
 #include "./memory.h"
-
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,8 +29,8 @@ int hflag = 0;  /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
-    int     res,
-            index;
+    int     res     = 0,
+            index   = 0;
 
     /* flag and args */
     clbiff_t cl_t = {
@@ -83,10 +82,8 @@ int main(int argc, char* argv[])
                 break;
             case    0:
                 print_usage();
-                break;
             case    1:
                 print_version();
-                break;
             case    '?':
                 return -1;
         }
@@ -100,6 +97,7 @@ int main(int argc, char* argv[])
         cl_t.farg = DEFAULT_INBOX;
     }
     if (check_file_stat(cl_t.farg) != 0) {
+
         return 2;
     }
     if (cl_t.cflag == 0) {
@@ -110,6 +108,7 @@ int main(int argc, char* argv[])
     }
     /* str to array */
     if ((cl_t.args = str_to_args(cl_t.carg)) == NULL) { 
+
         return 3;
     }
     /* prevention zombie process */
@@ -120,9 +119,10 @@ int main(int argc, char* argv[])
 
 int monitor(clbiff_t* cl_t)
 {
-    int     e_errno;
-    struct  stat stat_now;
-    struct  stat stat_ago;
+    int     e_errno = 0;
+
+    struct  stat    stat_now,
+                    stat_ago;
 
     while (hflag == 0) {
         if (stat(cl_t->farg, &stat_now) != 0) {

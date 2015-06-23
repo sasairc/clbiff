@@ -16,11 +16,13 @@ CFLAGS	:= -O2 -g -Wall -fno-strict-aliasing
 LDFLAGS	:=
 SRCS	= clbiff.c subset.c signal.c string.c file.c memory.c
 OBJS	= $(SRCS:.c=.o)
+ARCH	:= $(shell gcc -print-multiarch)
 
 all: $(TARGET) $(OBJS)
 
-DEFCFLAGS = 	$(INCLUDE)		  \
-		$(LIBS)		 	  \
+DEFCFLAGS = -DARCH=\"$(ARCH)\"	\
+		$(INCLUDE)	\
+		$(LIBS)		\
 		$(PKGCFG)
 
 DEFLDFLAGS = $(PKGCFG)
