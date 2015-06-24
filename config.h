@@ -23,8 +23,8 @@
 #define DEFAULT_TMSEC   30
 #define DEFAULT_EXEC    "eject"
 
-//#define   WITH_ADD_INFO
-//#define   WITH_USLEEP
-//#define   DEBUG
+#define WITH_ADD_INFO
+#undef  WITH_USLEEP
+#undef  DEBUG
 
 #endif
