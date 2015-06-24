@@ -20,10 +20,10 @@ ARCH	:= $(shell gcc -print-multiarch)
 
 all: $(TARGET) $(OBJS)
 
-DEFCFLAGS = -DARCH=\"$(ARCH)\"	\
-		$(INCLUDE)	\
+DEFCFLAGS =	$(INCLUDE)	\
 		$(LIBS)		\
-		$(PKGCFG)
+		$(PKGCFG)	\
+		-DARCH=\"$(ARCH)\"
 
 DEFLDFLAGS = $(PKGCFG)
 
