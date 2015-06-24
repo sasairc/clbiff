@@ -85,22 +85,7 @@ command  = %s\n\
 
     return 0;
 }
-#else
-int print_start_msg(clbiff_t* cl_t)
-{
-    fprintf(stdout, "%s %d.%d\n", PROGNAME, VERSION, PATCHLEVEL);
-    fprintf(stdout, "\
-pid      = %d\n\
-file     = %s\n\
-interval = %d usec\n\
-command  = %s\n\
-", getpid(), cl_t->farg, cl_t->iarg, cl_t->carg);
 
-    return 0;
-}
-#endif
-
-#ifndef WITH_USLEEP
 int print_usage(void)
 {
     fprintf(stdout, "\
@@ -124,6 +109,19 @@ Report %s bugs to %s <%s>\n\
     exit(0);
 }
 #else
+int print_start_msg(clbiff_t* cl_t)
+{
+    fprintf(stdout, "%s %d.%d\n", PROGNAME, VERSION, PATCHLEVEL);
+    fprintf(stdout, "\
+pid      = %d\n\
+file     = %s\n\
+interval = %d usec\n\
+command  = %s\n\
+", getpid(), cl_t->farg, cl_t->iarg, cl_t->carg);
+
+    return 0;
+}
+
 int print_usage(void)
 {
     fprintf(stdout, "\
