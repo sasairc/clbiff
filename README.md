@@ -1,6 +1,6 @@
 clbiff
 =====
-
+[![build](https://img.shields.io/travis/sasairc/clbiff.svg?style=flat)](https://travis-ci.org/sasairc/clbiff)
 [![version](https://img.shields.io/badge/tag-0.1-orange.svg?style=flat)](https://github.com/sasairc/clbiff/releases)
 [![license](https://img.shields.io/badge/License-WTFPL2-blue.svg?style=flat)](http://www.wtfpl.net/txt/copying/)
 
