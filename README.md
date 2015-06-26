@@ -1,7 +1,7 @@
 clbiff
 =====
 [![build](https://img.shields.io/travis/sasairc/clbiff.svg?style=flat)](https://travis-ci.org/sasairc/clbiff)
-[![version](https://img.shields.io/badge/tag-0.2-orange.svg?style=flat)](https://github.com/sasairc/clbiff/releases)
+[![version](http://img.shields.io/github/tag/sasairc/clbiff.svg?style=flat&label=version)](https://github.com/sasairc/clbiff/releases)
 [![license](https://img.shields.io/badge/License-WTFPL2-blue.svg?style=flat)](http://www.wtfpl.net/txt/copying/)
 
 新着メールの到着を任意のコマンドにてお知らせします。
