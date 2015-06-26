@@ -1,7 +1,7 @@
 clbiff
 =====
 [![build](https://img.shields.io/travis/sasairc/clbiff.svg?style=flat)](https://travis-ci.org/sasairc/clbiff)
-[![version](https://img.shields.io/badge/tag-0.1-orange.svg?style=flat)](https://github.com/sasairc/clbiff/releases)
+[![version](https://img.shields.io/badge/tag-0.2-orange.svg?style=flat)](https://github.com/sasairc/clbiff/releases)
 [![license](https://img.shields.io/badge/License-WTFPL2-blue.svg?style=flat)](http://www.wtfpl.net/txt/copying/)
 
 新着メールの到着を任意のコマンドにてお知らせします。
@@ -9,8 +9,6 @@ clbiff
 ### install
 
 * Other systems.  
-	`config.h`の`DEFAULT_INBOX`定数にてメールボックスを適時変更して下さい。  
-
   ```shellsession
   $ make PREFIX=/foo/bar	# デフォルトでは、PREFIX=/usr/localです
   # make install PREFIX=/foo/bar
@@ -21,6 +19,7 @@ clbiff
 	秒単位で時間を確認周期の設定をします。デフォルト値は30秒です。
 * `-f, --file` option  
 	確認するメールボックスを指定します。  
+	デフォルトではシェル環境変数`$MAIL`を参照し、Maildir(`$MAIL/new`)およびMH形式(`$MAIL/inbox`)をサポートします。  
 
 * `-c, --command` option  
 	実行するコマンドを指定します。オプション等は使えますが、パイプは使えません。  
@@ -52,6 +51,10 @@ clbiff
 % clbiff --file="/mnt/ramdisk/seamonkey/cache2/entries" --command="xterm" -i 1 &
 ```
 お察し下さい
+
+### Additional Infomation
+`config.h`で規定の動作を変更できます。  
+使い道は分かりませんが、`WITH_USLEEP`を有効にするとマイクロ秒単位で確認できたり・・・
 	
 
 #### License
