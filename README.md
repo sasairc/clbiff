@@ -9,10 +9,10 @@ clbiff
 ### install
 
 * Other systems.  
-  ```shellsession
+```shellsession
   $ make PREFIX=/foo/bar	# デフォルトでは、PREFIX=/usr/localです
   # make install PREFIX=/foo/bar
-  ```
+```
 
 ### Option
 * `-i, --interval` option  
