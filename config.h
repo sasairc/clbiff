@@ -15,13 +15,15 @@
 
 #define PROGNAME        "clbiff"
 #define VERSION         0
-#define PATCHLEVEL      1
+#define PATCHLEVEL      2
 #define AUTHOR          "sasairc"
 #define MAIL_TO         "sasairc@ssiserver.moe.hm"
 
-#define DEFAULT_INBOX   "/home/sasai/Mail/inbox"
 #define DEFAULT_TMSEC   30
 #define DEFAULT_EXEC    "eject"
+
+#define INBOX_MBOX      "/inbox"    /* support mh */
+#define INBOX_MDIR      "/new"      /* support maildir */
 
 #define WITH_ADD_INFO
 #undef  WITH_USLEEP
