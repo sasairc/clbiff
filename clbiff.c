@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 
         return 1;
     };
+
     /* procssing of arguments */
     while ((res = getopt_long(argc, argv, "i:f:c:qv", opts, &index)) != -1) {
         switch (res) {
@@ -93,8 +94,9 @@ int main(int argc, char* argv[])
     if (cl_t.iflag == 0) {
         cl_t.iarg = DEFAULT_TMSEC;
     }
-    if (cl_t.fflag == 0) {
-        cl_t.farg = DEFAULT_INBOX;
+    if (cl_t.fflag == 0 && (cl_t.farg = get_mailbox_env()) == NULL) {
+
+        return 1;
     }
     if (check_file_stat(cl_t.farg) != 0) {
 
@@ -127,7 +129,7 @@ int monitor(clbiff_t* cl_t)
     while (hflag == 0) {
         if (stat(cl_t->farg, &stat_now) != 0) {
             print_msg(2, stderr, "stat()failure\n");
-            release(cl_t->args);
+            release(cl_t);
 
             return errno;
         }
@@ -138,7 +140,7 @@ int monitor(clbiff_t* cl_t)
 #endif
         if (stat(cl_t->farg, &stat_ago) != 0) {
             print_msg(2, stderr, "stat()failure\n");
-            release(cl_t->args);
+            release(cl_t);
 
             return errno;
         }
@@ -158,7 +160,8 @@ int monitor(clbiff_t* cl_t)
                 PROGNAME, getpid(), hflag
         );
     }
-    release(cl_t->args);    /* release memory */
+    /* release memory */
+    release(cl_t);
 
     return 0;
 }
@@ -194,17 +197,22 @@ void catch_signal(int sig)
     hflag = sig;    /* brak monitor loop */
 }
 
-void release(char** args)
+void release(clbiff_t* cl_t)
 {
 #ifdef  DEBUG
     int i;
 
-    fprintf(stderr, "DEBUG: release(): args(%p)\n", args);
-    for (i = 0; i <= p_count_file_lines(args); i++)
-        fprintf(stderr, "DEBUG: release(): args[%d](%p) = %s\n", i, args[i], args[i]);
+    fprintf(stderr, "DEBUG: release(): cl_t->farg(%p) = %s\n", cl_t->farg, cl_t->farg);
+    fprintf(stderr, "DEBUG: release(): cl_t->args(%p)\n", cl_t->args);
+    for (i = 0; i <= p_count_file_lines(cl_t->args); i++)
+        fprintf(stderr, "DEBUG: release(): cl_t->args[%d](%p) = %s\n", i, cl_t->args[i], cl_t->args[i]);
 #endif
 
-    free2d(args, p_count_file_lines(args));
+    if (cl_t->fflag == 0 && cl_t->farg != NULL) {
+        free(cl_t->farg);
+        cl_t->farg = NULL;
+    }
+    free2d(cl_t->args, p_count_file_lines(cl_t->args));
 
     return;
 }
