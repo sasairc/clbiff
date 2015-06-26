@@ -13,11 +13,46 @@
 #include "./subset.h"
 #include "./config.h"
 #include "./clbiff.h"
+#include "./file.h"
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <sys/stat.h>
+
+char* get_mailbox_env(void)
+{
+    int     i       = 0;
+    char*   mpath   = NULL,
+        *   inbox   = NULL,
+        *   fmt[]   = {INBOX_MBOX, INBOX_MDIR, NULL};
+
+    struct  stat    st;
+
+    if ((mpath = getenv("MAIL")) == NULL) {
+    
+        return NULL;
+    }
+    for (i = 0; fmt[i] != NULL; i++) {
+        if ((inbox = (char*)malloc
+                    (sizeof(char) * (strlen(mpath) + strlen(fmt[i])))
+                    ) == NULL) {
+
+            return NULL;
+        } else {
+            strcpy(inbox, mpath);
+            strcat(inbox, fmt[i]);
+        }
+        if (stat(inbox, &st) != 0) {
+            free(inbox);
+        } else {
+            break;
+        }
+    }
+
+    return inbox;
+}
 
 int check_file_stat(char* path)
 {
@@ -94,9 +129,9 @@ Usage: clbiff [OPTION]...\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
 \n\
-  -i,  --interval=SECONDS    interval time (sec)\n\
-  -c,  --command=COMMAND     specifies command\n\
-  -f,  --file=file           monitored file\n\
+  -i,  --interval=SECONDS    interval time (default %d sec)\n\
+  -c,  --command=COMMAND     specifies command (default %s)\n\
+  -f,  --file=file           monitored file (default $MAIL eval)\n\
   -q,  --quiet               quiet mode\n\
   -v,  --verbose             verbose mode\n\
 \n\
@@ -104,7 +139,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
        --version             output version infomation and exit\n\
 \n\
 Report %s bugs to %s <%s>\n\
-", PROGNAME, VERSION, PATCHLEVEL, PROGNAME, AUTHOR, MAIL_TO);
+", PROGNAME, VERSION, PATCHLEVEL,
+DEFAULT_TMSEC, DEFAULT_EXEC,
+PROGNAME, AUTHOR, MAIL_TO);
 
     exit(0);
 }
@@ -130,9 +167,9 @@ Usage: clbiff [OPTION]...\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
 \n\
-  -i,  --interval=USECONDS   interval time (usec)\n\
-  -c,  --command=COMMAND     specifies command\n\
-  -f,  --file=file           monitored file\n\
+  -i,  --interval=USECONDS   interval time (default %d usec)\n\
+  -c,  --command=COMMAND     specifies command (default %s)\n\
+  -f,  --file=file           monitored file (default $MAIL eval)\n\
   -q,  --quiet               quiet mode\n\
   -v,  --verbose             verbose mode\n\
 \n\
@@ -140,7 +177,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
        --version             output version infomation and exit\n\
 \n\
 Report %s bugs to %s <%s>\n\
-", PROGNAME, VERSION, PATCHLEVEL, PROGNAME, AUTHOR, MAIL_TO);
+", PROGNAME, VERSION, PATCHLEVEL,
+DEFAULT_TMSEC, DEFAULT_EXEC,
+PROGNAME, AUTHOR, MAIL_TO);
 
     exit(0);
 }

@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 /* This functions is required subset.c */
+extern char* get_mailbox_env(void);
 extern int check_file_stat(char* path);
 extern int print_msg(int argnum, ...);
 extern int print_start_msg(clbiff_t* clb);
