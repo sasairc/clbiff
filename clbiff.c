@@ -95,6 +95,7 @@ int main(int argc, char* argv[])
         cl_t.iarg = DEFAULT_TMSEC;
     }
     if (cl_t.fflag == 0 && (cl_t.farg = get_mailbox_env()) == NULL) {
+        fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n", PROGNAME);
 
         return 1;
     }
