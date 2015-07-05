@@ -4,4 +4,11 @@ compiler:
     - clang
 script:
     - make CC=$CC
+    - ./clbiff --version
+    - ./clbiff -f . -i 1 -c date -v &
+    - for ((i = 0; i < 16; i++)); do
+    - expr $i % 2 && touch test.txt && sleep 2 && continue;
+    - expr $i % 2 || rm test.txt && sleep 2 && continue;
+    - done
+    - kill %./clbiff
     - make clean
