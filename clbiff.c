@@ -13,6 +13,7 @@
 #include "./config.h"
 #include "./clbiff.h"
 #include "./subset.h"
+#include "./info.h"
 #include "./signal.h"
 #include "./file.h"
 #include "./string.h"
@@ -36,6 +37,7 @@ int main(int argc, char* argv[])
     clbiff_t cl_t = {
         0, 0, 0, 0, 0, 0, NULL, NULL, NULL,
     };
+
     /* option for getopt_long() */
     struct  option opts[] = {
         {"interval",    required_argument,  NULL, 'i'},
@@ -95,7 +97,9 @@ int main(int argc, char* argv[])
         cl_t.iarg = DEFAULT_TMSEC;
     }
     if (cl_t.fflag == 0 && (cl_t.farg = get_mailbox_env()) == NULL) {
-        fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n", PROGNAME);
+        fprintf(stderr,
+                "%s: mailbox not found, try setting env $MAIL or use -f options\n",
+                PROGNAME);
 
         return 1;
     }
@@ -117,12 +121,13 @@ int main(int argc, char* argv[])
     /* prevention zombie process */
     handl_zombie_proc();
 
+    /* do main loop */
     return monitor(&cl_t);
 }
 
 int monitor(clbiff_t* cl_t)
 {
-    int     e_errno = 0;
+    int             e_errno = 0;
 
     struct  stat    stat_now,
                     stat_ago;
@@ -158,8 +163,7 @@ int monitor(clbiff_t* cl_t)
         fprintf(
                 stdout,
                 "\n%s[%d]: exiting on signal %d\n",
-                PROGNAME, getpid(), hflag
-        );
+                PROGNAME, getpid(), hflag);
     }
     /* release memory */
     release(cl_t);
@@ -203,10 +207,17 @@ void release(clbiff_t* cl_t)
 #ifdef  DEBUG
     int i;
 
-    fprintf(stderr, "DEBUG: release(): cl_t->farg(%p) = %s\n", cl_t->farg, cl_t->farg);
-    fprintf(stderr, "DEBUG: release(): cl_t->args(%p)\n", cl_t->args);
+    fprintf(stderr,
+            "DEBUG: release(): cl_t->farg(%p) = %s\n",
+            cl_t->farg, cl_t->farg);
+    fprintf(stderr,
+            "DEBUG: release(): cl_t->args(%p)\n",
+            cl_t->args);
+
     for (i = 0; i <= p_count_file_lines(cl_t->args); i++)
-        fprintf(stderr, "DEBUG: release(): cl_t->args[%d](%p) = %s\n", i, cl_t->args[i], cl_t->args[i]);
+        fprintf(stderr,
+                "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
+                i, cl_t->args[i], cl_t->args[i]);
 #endif
 
     if (cl_t->fflag == 0 && cl_t->farg != NULL) {
