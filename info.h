@@ -1,7 +1,7 @@
 /*
  * clbiff -  simple mail notify program
  *
- * clbiff.c
+ * info.h
  *
  * Copyright (c) 2015 sasairc
  * This work is free. You can redistribute it and/or modify it under the
@@ -10,12 +10,10 @@
  * for more details.
  */
 
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef INFO_H
+#define INFO_H
 
-/* This functions is required memory.c */
-extern char** malloc2d(int x, int y);
-extern int init2d(char** buf, int x, int y);
-extern void free2d(char** buf, int y);
+extern int print_usage(void);
+extern int print_version(void);
 
 #endif

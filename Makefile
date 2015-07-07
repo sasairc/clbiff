@@ -32,8 +32,11 @@ $(TARGET): $(OBJS)
 clbiff.o: clbiff.c clbiff.h config.h
 	$(CC) $(DEFCFLAGS) $(CFLAGS) -c clbiff.c -o clbiff.o
 
-subset.o: subset.c subset.h subset.h
+subset.o: subset.c subset.h config.h
 	$(CC) $(DEFCFLAGS) $(CFLAGS) -c subset.c -o subset.o
+
+info.o: info.c info.h config.h
+	$(CC) $(DEFCFLAGS) $(CFLAGS) -c info.c -o info.o
 
 signal.o: signal.c signal.h
 	$(CC) $(DEFCFLAGS) $(CFLAGS) -c signal.c -o signal.o

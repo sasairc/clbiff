@@ -13,6 +13,7 @@
 #include "./config.h"
 #include "./clbiff.h"
 #include "./subset.h"
+#include "./info.h"
 #include "./signal.h"
 #include "./file.h"
 #include "./string.h"
@@ -29,13 +30,15 @@ int hflag = 0;  /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
-    int     res     = 0,
+    int     ret     = 0,
+            res     = 0,
             index   = 0;
 
     /* flag and args */
     clbiff_t cl_t = {
         0, 0, 0, 0, 0, 0, NULL, NULL, NULL,
     };
+
     /* option for getopt_long() */
     struct  option opts[] = {
         {"interval",    required_argument,  NULL, 'i'},
@@ -91,38 +94,52 @@ int main(int argc, char* argv[])
     }
 
     /* setting value */
-    if (cl_t.iflag == 0) {
-        cl_t.iarg = DEFAULT_TMSEC;
-    }
-    if (cl_t.fflag == 0 && (cl_t.farg = get_mailbox_env()) == NULL) {
-        fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n", PROGNAME);
+    if ((ret = init(&cl_t)) != 0) {
 
-        return 1;
+        return ret;
     }
-    if (check_file_stat(cl_t.farg) != 0) {
-
-        return 2;
-    }
-    if (cl_t.cflag == 0) {
-        cl_t.carg = DEFAULT_EXEC;
-    }
+    /* verbose message */
     if (cl_t.vflag == 1) {
         print_start_msg(&cl_t);
-    }
-    /* str to array */
-    if ((cl_t.args = str_to_args(cl_t.carg)) == NULL) { 
-
-        return 3;
     }
     /* prevention zombie process */
     handl_zombie_proc();
 
+    /* do main loop */
     return monitor(&cl_t);
+}
+
+int init(clbiff_t* cl_t)
+{
+    if (cl_t->iflag == 0) {
+        cl_t->iarg = DEFAULT_TMSEC;
+    }
+    if (cl_t->fflag == 0 && (cl_t->farg = get_mailbox_env()) == NULL) {
+        fprintf(stderr,
+                "%s: mailbox not found, try setting env $MAIL or use -f options\n",
+                PROGNAME);
+
+        return 1;
+    }
+    if (check_file_stat(cl_t->farg) != 0) {
+
+        return 2;
+    }
+    if (cl_t->cflag == 0) {
+        cl_t->carg = DEFAULT_EXEC;
+    }
+    /* str to array */
+    if ((cl_t->args = str_to_args(cl_t->carg)) == NULL) { 
+
+        return 3;
+    }
+
+    return 0;
 }
 
 int monitor(clbiff_t* cl_t)
 {
-    int     e_errno = 0;
+    int             e_errno = 0;
 
     struct  stat    stat_now,
                     stat_ago;
@@ -158,8 +175,7 @@ int monitor(clbiff_t* cl_t)
         fprintf(
                 stdout,
                 "\n%s[%d]: exiting on signal %d\n",
-                PROGNAME, getpid(), hflag
-        );
+                PROGNAME, getpid(), hflag);
     }
     /* release memory */
     release(cl_t);
@@ -203,10 +219,17 @@ void release(clbiff_t* cl_t)
 #ifdef  DEBUG
     int i;
 
-    fprintf(stderr, "DEBUG: release(): cl_t->farg(%p) = %s\n", cl_t->farg, cl_t->farg);
-    fprintf(stderr, "DEBUG: release(): cl_t->args(%p)\n", cl_t->args);
+    fprintf(stderr,
+            "DEBUG: release(): cl_t->farg(%p) = %s\n",
+            cl_t->farg, cl_t->farg);
+    fprintf(stderr,
+            "DEBUG: release(): cl_t->args(%p)\n",
+            cl_t->args);
+
     for (i = 0; i <= p_count_file_lines(cl_t->args); i++)
-        fprintf(stderr, "DEBUG: release(): cl_t->args[%d](%p) = %s\n", i, cl_t->args[i], cl_t->args[i]);
+        fprintf(stderr,
+                "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
+                i, cl_t->args[i], cl_t->args[i]);
 #endif
 
     if (cl_t->fflag == 0 && cl_t->farg != NULL) {

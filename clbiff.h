@@ -26,6 +26,7 @@ typedef struct CLBIFF_T {
 } clbiff_t;
 
 /* This functions is required clbiff.c */
+extern int init(clbiff_t* cl_t);
 extern int monitor(clbiff_t* cl_t);
 extern int exec_cmd(char** args, int vflag);
 extern void catch_signal(int sig);
