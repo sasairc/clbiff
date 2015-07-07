@@ -30,7 +30,8 @@ int hflag = 0;  /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
-    int     res     = 0,
+    int     ret     = 0,
+            res     = 0,
             index   = 0;
 
     /* flag and args */
@@ -93,36 +94,47 @@ int main(int argc, char* argv[])
     }
 
     /* setting value */
-    if (cl_t.iflag == 0) {
-        cl_t.iarg = DEFAULT_TMSEC;
-    }
-    if (cl_t.fflag == 0 && (cl_t.farg = get_mailbox_env()) == NULL) {
-        fprintf(stderr,
-                "%s: mailbox not found, try setting env $MAIL or use -f options\n",
-                PROGNAME);
+    if ((ret = init(&cl_t)) != 0) {
 
-        return 1;
+        return ret;
     }
-    if (check_file_stat(cl_t.farg) != 0) {
-
-        return 2;
-    }
-    if (cl_t.cflag == 0) {
-        cl_t.carg = DEFAULT_EXEC;
-    }
+    /* verbose message */
     if (cl_t.vflag == 1) {
         print_start_msg(&cl_t);
-    }
-    /* str to array */
-    if ((cl_t.args = str_to_args(cl_t.carg)) == NULL) { 
-
-        return 3;
     }
     /* prevention zombie process */
     handl_zombie_proc();
 
     /* do main loop */
     return monitor(&cl_t);
+}
+
+int init(clbiff_t* cl_t)
+{
+    if (cl_t->iflag == 0) {
+        cl_t->iarg = DEFAULT_TMSEC;
+    }
+    if (cl_t->fflag == 0 && (cl_t->farg = get_mailbox_env()) == NULL) {
+        fprintf(stderr,
+                "%s: mailbox not found, try setting env $MAIL or use -f options\n",
+                PROGNAME);
+
+        return 1;
+    }
+    if (check_file_stat(cl_t->farg) != 0) {
+
+        return 2;
+    }
+    if (cl_t->cflag == 0) {
+        cl_t->carg = DEFAULT_EXEC;
+    }
+    /* str to array */
+    if ((cl_t->args = str_to_args(cl_t->carg)) == NULL) { 
+
+        return 3;
+    }
+
+    return 0;
 }
 
 int monitor(clbiff_t* cl_t)
