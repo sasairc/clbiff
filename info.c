@@ -71,8 +71,7 @@ Report %s bugs to %s <%s>\n\
 
 int print_version(void)
 {
-    fprintf(stdout,
-            "%s %d.%d%s (%s)\n",
+    fprintf(stdout, "%s %d.%d%s (%s)\n",
             PROGNAME, VERSION, PATCHLEVEL, EXTRAVERSION, ARCH);
 
     exit(0);

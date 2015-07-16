@@ -115,8 +115,7 @@ int init(clbiff_t* cl_t)
         cl_t->iarg = DEFAULT_TMSEC;
     }
     if (cl_t->fflag == 0 && (cl_t->farg = get_mailbox_env()) == NULL) {
-        fprintf(stderr,
-                "%s: mailbox not found, try setting env $MAIL or use -f options\n",
+        fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n",
                 PROGNAME);
 
         return 1;
@@ -219,16 +218,13 @@ void release(clbiff_t* cl_t)
 #ifdef  DEBUG
     int i;
 
-    fprintf(stderr,
-            "DEBUG: release(): cl_t->farg(%p) = %s\n",
+    fprintf(stderr, "DEBUG: release(): cl_t->farg(%p) = %s\n",
             cl_t->farg, cl_t->farg);
-    fprintf(stderr,
-            "DEBUG: release(): cl_t->args(%p)\n",
+    fprintf(stderr, "DEBUG: release(): cl_t->args(%p)\n",
             cl_t->args);
 
     for (i = 0; i <= p_count_file_lines(cl_t->args); i++)
-        fprintf(stderr,
-                "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
+        fprintf(stderr, "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
                 i, cl_t->args[i], cl_t->args[i]);
 #endif
 
