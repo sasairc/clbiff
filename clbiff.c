@@ -171,9 +171,7 @@ int monitor(clbiff_t* cl_t)
 
     /* interrupt handling */
     if (cl_t->vflag) {
-        fprintf(
-                stdout,
-                "\n%s[%d]: exiting on signal %d\n",
+        fprintf(stdout, "\n%s[%d]: exiting on signal %d\n",
                 PROGNAME, getpid(), hflag);
     }
     /* release memory */

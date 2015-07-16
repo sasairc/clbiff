@@ -134,6 +134,7 @@ int print_start_msg(clbiff_t* cl_t)
 {
     fprintf(stdout, "%s %d.%d%s\n",
             PROGNAME, VERSION, PATCHLEVEL, EXTRAVERSION);
+
     fprintf(stdout, "\
 pid      = %d\n\
 file     = %s\n\
