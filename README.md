@@ -7,15 +7,13 @@ clbiff
 
 新着メールの到着を任意のコマンドにてお知らせします。
 
-### install
-
-* Other systems.  
+## install
 ```shellsession
   $ make PREFIX=/foo/bar	# デフォルトでは、PREFIX=/usr/localです
   # make install PREFIX=/foo/bar
 ```
 
-### Option
+## Option
 * `-i, --interval` option  
 	秒単位で時間を確認周期の設定をします。デフォルト値は30秒です。
 * `-f, --file` option  
@@ -32,7 +30,7 @@ clbiff
 * `-v, --verbose` option  
 	何かが起こる度にメッセージを出力するようにします。（鬱陶しい）
 
-### Basic Usage
+## Basic Usage
 ```shellsession
 % clbiff --file="$HOME/Mail/inbox" --command="yasuna" -i 60 &
 [1] 10367
@@ -47,19 +45,19 @@ clbiff
 % kill 10367	# SIGINTやSIGTERMを受信すると終了処理をします
 ```
 
-### Additional Usage
+## Additional Usage
 ``` shellsession
 % clbiff --file="/mnt/ramdisk/seamonkey/cache2/entries" --command="xterm" -i 1 &
 ```
 お察し下さい
 
-### Additional Infomation
+## Additional Infomation
 `config.h`で規定の動作を変更できます。  
 使い道は分かりませんが、`WITH_USLEEP`を有効にするとマイクロ秒単位で確認できたり・・・
 	
 
-#### License
+## License
 [WTFPL version 2](http://www.wtfpl.net/txt/copying/)
 
-### Author
+## Author
 sasairc (https://github.com/sasairc)
