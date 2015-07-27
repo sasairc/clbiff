@@ -13,42 +13,25 @@ CC	:= cc
 RM	:= rm
 CFLAGS	:= -O2 -g -Wall -fno-strict-aliasing
 LDFLAGS	:=
+
 SRCS	= $(wildcard *.c)
 OBJS	= $(SRCS:.c=.o)
-ARCH	:= $(shell gcc -print-multiarch)
+ARCH	= $(shell gcc -print-multiarch)
 
-all: $(TARGET) $(OBJS)
-
-DEFCFLAGS =	$(INCLUDE)	\
-		$(LIBS)		\
-		$(PKGCFG)	\
-		-DARCH=\"$(ARCH)\"
+DEFCFLAGS = -DARCH=\"$(ARCH)\" \
+		$(INCLUDE)     \
+		$(LIBS)        \
+		$(PKGCFG)
 
 DEFLDFLAGS = $(PKGCFG)
+
+all: $(TARGET) $(OBJS)
 
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(DEFLDFLAGS) $(LDFLAGS)
 
-clbiff.o: clbiff.c clbiff.h config.h
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c clbiff.c -o clbiff.o
-
-subset.o: subset.c subset.h config.h
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c subset.c -o subset.o
-
-info.o: info.c info.h config.h
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c info.c -o info.o
-
-signal.o: signal.c signal.h
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c signal.c -o signal.o
-
-string.o: string.c string.h
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c string.c -o string.o
-
-file.o: file.c file.h
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c file.c -o file.o
-
-memory.o: memory.c memory.h
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c memory.c -o memory.o
+%.o: %.c %.h
+	$(CC) $(DEFCFLAGS) $(CFLAGS) -c $< -o $@
 
 install-bin: $(TARGET)
 	install -pd $(BINDIR)
@@ -56,7 +39,8 @@ install-bin: $(TARGET)
 
 install: install-bin
 
-.PHONY: clean
 clean:
 	-$(RM) -f $(OBJS)
 	-$(RM) -f $(TARGET)
+
+.PHONY: all install clean
