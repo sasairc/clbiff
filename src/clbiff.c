@@ -19,8 +19,10 @@
 #include "./string.h"
 #include "./memory.h"
 #include <errno.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
@@ -30,7 +32,8 @@ int hflag = 0;  /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
-    int     ret     = 0,
+    int     i       = 0,
+            ret     = 0,
             res     = 0,
             index   = 0;
 
@@ -67,6 +70,14 @@ int main(int argc, char* argv[])
     while ((res = getopt_long(argc, argv, "i:f:c:qv", opts, &index)) != -1) {
         switch (res) {
             case    'i':
+                for (i = 0; i < strlen(optarg); i++) {
+                    if (!isdigit(*(optarg + i))) {
+                        fprintf(stderr, "%s: %s: invalid number of interval\n",
+                                PROGNAME, optarg);
+
+                        return -1;
+                    }
+                }
                 cl_t.iflag = 1;
                 cl_t.iarg = atoi(optarg);
                 break;
