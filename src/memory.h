@@ -1,7 +1,7 @@
 /*
  * clbiff -  simple mail notify program
  *
- * clbiff.c
+ * memory.h
  *
  * Copyright (c) 2015 sasairc
  * This work is free. You can redistribute it and/or modify it under the

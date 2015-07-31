@@ -4,8 +4,8 @@ compiler:
     - clang
 script:
     - make CC=$CC
-    - ./clbiff --version
-    - ./clbiff -f . -i 1 -c date -v &
+    - ./src/clbiff --version
+    - ./src/clbiff -f . -i 1 -c date -v &
     - ./test.sh
-    - kill %./clbiff
+    - kill %./src/clbiff
     - make clean

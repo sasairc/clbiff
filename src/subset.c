@@ -60,15 +60,13 @@ int check_file_stat(char* path)
     struct  stat st;
 
     if (stat(path, &st) != 0) {
-        fprintf(stderr,
-                "%s[%d]: %s: no such file or directory\n",
+        fprintf(stderr, "%s[%d]: %s: no such file or directory\n",
                 PROGNAME, getpid(), path);
 
         return 1;
     }
     if (access(path, R_OK) != 0) {
-        fprintf(stderr,
-                "%s[%d]: %s: permission denied\n",
+        fprintf(stderr, "%s[%d]: %s: permission denied\n",
                 PROGNAME, getpid(), path);
 
         return 2;
@@ -93,12 +91,15 @@ int print_msg(int argnum, ...)
             case    0:
 #ifdef  WITH_ADD_INFO
                 if (fp == stdout) {
-                    fprintf(fp, "[INFO]: %s[%d]: ", PROGNAME, getpid());
+                    fprintf(fp, "[INFO]: %s[%d]: ",
+                            PROGNAME, getpid());
                 } else if (fp == stderr) {
-                    fprintf(fp, "[WARN]: %s[%d]: ", PROGNAME, getpid());
+                    fprintf(fp, "[WARN]: %s[%d]: ",
+                            PROGNAME, getpid());
                 }
 #else
-                fprintf(fp, "%s[%d]: ", PROGNAME, getpid());
+                fprintf(fp, "%s[%d]: ",
+                        PROGNAME, getpid());
 #endif
                 break;
             default:
@@ -115,8 +116,7 @@ int print_msg(int argnum, ...)
 #ifndef WITH_USLEEP
 int print_start_msg(clbiff_t* cl_t)
 {
-    fprintf(stdout,
-            "%s %d.%d%s\n",
+    fprintf(stdout, "%s %d.%d%s\n",
             PROGNAME, VERSION, PATCHLEVEL, EXTRAVERSION);
 
     fprintf(stdout, "\
@@ -132,9 +132,9 @@ command  = %s\n\
 #else
 int print_start_msg(clbiff_t* cl_t)
 {
-    fprintf(stdout,
-            "%s %d.%d%s\n",
+    fprintf(stdout, "%s %d.%d%s\n",
             PROGNAME, VERSION, PATCHLEVEL, EXTRAVERSION);
+
     fprintf(stdout, "\
 pid      = %d\n\
 file     = %s\n\

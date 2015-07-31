@@ -19,8 +19,10 @@
 #include "./string.h"
 #include "./memory.h"
 #include <errno.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
@@ -30,7 +32,8 @@ int hflag = 0;  /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
-    int     ret     = 0,
+    int     i       = 0,
+            ret     = 0,
             res     = 0,
             index   = 0;
 
@@ -67,6 +70,14 @@ int main(int argc, char* argv[])
     while ((res = getopt_long(argc, argv, "i:f:c:qv", opts, &index)) != -1) {
         switch (res) {
             case    'i':
+                for (i = 0; i < strlen(optarg); i++) {
+                    if (!isdigit(*(optarg + i))) {
+                        fprintf(stderr, "%s: %s: invalid number of interval\n",
+                                PROGNAME, optarg);
+
+                        return -1;
+                    }
+                }
                 cl_t.iflag = 1;
                 cl_t.iarg = atoi(optarg);
                 break;
@@ -115,8 +126,7 @@ int init(clbiff_t* cl_t)
         cl_t->iarg = DEFAULT_TMSEC;
     }
     if (cl_t->fflag == 0 && (cl_t->farg = get_mailbox_env()) == NULL) {
-        fprintf(stderr,
-                "%s: mailbox not found, try setting env $MAIL or use -f options\n",
+        fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n",
                 PROGNAME);
 
         return 1;
@@ -172,9 +182,7 @@ int monitor(clbiff_t* cl_t)
 
     /* interrupt handling */
     if (cl_t->vflag) {
-        fprintf(
-                stdout,
-                "\n%s[%d]: exiting on signal %d\n",
+        fprintf(stdout, "\n%s[%d]: exiting on signal %d\n",
                 PROGNAME, getpid(), hflag);
     }
     /* release memory */
@@ -219,16 +227,13 @@ void release(clbiff_t* cl_t)
 #ifdef  DEBUG
     int i;
 
-    fprintf(stderr,
-            "DEBUG: release(): cl_t->farg(%p) = %s\n",
+    fprintf(stderr, "DEBUG: release(): cl_t->farg(%p) = %s\n",
             cl_t->farg, cl_t->farg);
-    fprintf(stderr,
-            "DEBUG: release(): cl_t->args(%p)\n",
+    fprintf(stderr, "DEBUG: release(): cl_t->args(%p)\n",
             cl_t->args);
 
     for (i = 0; i <= p_count_file_lines(cl_t->args); i++)
-        fprintf(stderr,
-                "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
+        fprintf(stderr, "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
                 i, cl_t->args[i], cl_t->args[i]);
 #endif
 
