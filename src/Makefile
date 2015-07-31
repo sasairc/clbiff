@@ -7,6 +7,10 @@ SRCS	= $(wildcard *.c)
 OBJS	= $(SRCS:.c=.o)
 ARCH	= $(shell gcc -print-multiarch)
 
+DEFCFLAGS = -DARCH=\"$(ARCH)\" \
+		$(INCLUDE)     \
+		$(LIBS)
+
 all: $(TARGET) $(OBJS)
 
 $(TARGET): $(OBJS)
