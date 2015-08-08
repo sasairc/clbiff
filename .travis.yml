@@ -3,9 +3,16 @@ compiler:
     - gcc
     - clang
 script:
-    - make CC=$CC
-    - ./src/clbiff --version
-    - ./src/clbiff -f . -i 1 -c date -v &
+    - export CC="$CC" TEST_PREFIX="`pwd`/test_prefix"
+    - make CC="$CC" PREFIX="${TEST_PREFIX}"
+    - make CC="$CC" PREFIX="${TEST_PREFIX}" install
+    - tree ${TEST_PREFIX}
+    - ${TEST_PREFIX}/bin/clbiff --version
+    - ${TEST_PREFIX}/bin/clbiff --help
+    - ${TEST_PREFIX}/bin/clbiff -f . -i 1 -c date -v &
     - ./test.sh
-    - kill %./src/clbiff
+    - kill %${TEST_PREFIX}/bin/clbiff
     - make clean
+    - rm -rf ${TEST_PREFIX}
+    - unset TEST_PREFIX
+ 
