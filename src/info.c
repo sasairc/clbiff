@@ -19,7 +19,7 @@
 int print_usage(void)
 {
     fprintf(stdout, "\
-%s %d.%d%s, simple mail notify program\n\
+%s %d.%d.%d%s, simple mail notify program\n\
 Usage: clbiff [OPTION]...\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
@@ -35,7 +35,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 \n\
 Report %s bugs to %s <%s>\n\
 ",
-        PROGNAME, VERSION, PATCHLEVEL,EXTRAVERSION,
+        PROGNAME, VERSION, PATCHLEVEL, SUBLEVEL, EXTRAVERSION,
         DEFAULT_TMSEC, DEFAULT_EXEC,
         PROGNAME, AUTHOR, MAIL_TO);
 
@@ -45,7 +45,7 @@ Report %s bugs to %s <%s>\n\
 int print_usage(void)
 {
     fprintf(stdout, "\
-%s %d.%d%s, simple mail notify program with usleep\n\
+%s %d.%d.%d%s, simple mail notify program with usleep\n\
 Usage: clbiff [OPTION]...\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
@@ -61,7 +61,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 \n\
 Report %s bugs to %s <%s>\n\
 ",
-        PROGNAME, VERSION, PATCHLEVEL, EXTRAVERSION,
+        PROGNAME, VERSION, PATCHLEVEL, SUBLEVEL, EXTRAVERSION,
         DEFAULT_TMSEC, DEFAULT_EXEC,
         PROGNAME, AUTHOR, MAIL_TO);
 
@@ -71,8 +71,8 @@ Report %s bugs to %s <%s>\n\
 
 int print_version(void)
 {
-    fprintf(stdout, "%s %d.%d%s (%s)\n",
-            PROGNAME, VERSION, PATCHLEVEL, EXTRAVERSION, ARCH);
+    fprintf(stdout, "%s %d.%d.%d%s (%s)\n",
+            PROGNAME, VERSION, PATCHLEVEL, SUBLEVEL, EXTRAVERSION, ARCH);
 
     exit(0);
 }

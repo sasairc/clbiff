@@ -2,6 +2,7 @@
 #    Makefile for clbiff
 #
 
+TARGET	= clbiff
 PREFIX	:= /usr/local
 BINDIR	:= $(PREFIX)/bin
 INCLUDE :=
@@ -11,9 +12,15 @@ CC	:= cc
 RM	:= rm
 CFLAGS	:= -O2 -g -Wall -fno-strict-aliasing
 LDFLAGS	:=
+CMDLINE	:= 0
 export
 
-all install install-bin clean:
+all install-bin clean:
 	@$(MAKE) -C ./src	$@
 
-.PHONY: all install install-bin clean
+install: install-bin
+
+.PHONY: all		\
+	install		\
+	install-bin	\
+	clean
