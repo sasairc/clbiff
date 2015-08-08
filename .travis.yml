@@ -2,6 +2,9 @@ language: c
 compiler:
     - gcc
     - clang
+before_install:
+    - sudo apt-get update
+    - sudo apt-get -y install tree
 script:
     - export CC="$CC" TEST_PREFIX="`pwd`/test_prefix"
     - make CC="$CC" PREFIX="${TEST_PREFIX}"
@@ -11,8 +14,8 @@ script:
     - ${TEST_PREFIX}/bin/clbiff --help
     - ${TEST_PREFIX}/bin/clbiff -f . -i 1 -c date -v &
     - ./test.sh
-    - kill %${TEST_PREFIX}/bin/clbiff
+    - pgrep -l -u $UID clbiff
+    - pkill -l -u $UID clbiff
     - make clean
     - rm -rf ${TEST_PREFIX}
     - unset TEST_PREFIX
- 
