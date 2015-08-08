@@ -15,7 +15,7 @@ script:
     - ${TEST_PREFIX}/bin/clbiff -f . -i 1 -c date -v &
     - ./test.sh
     - pgrep -l -u $UID clbiff
-    - pkill -l -u $UID clbiff
+    - pkill -u $UID clbiff
     - make clean
     - rm -rf ${TEST_PREFIX}
     - unset TEST_PREFIX
