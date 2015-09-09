@@ -10,7 +10,7 @@ LIBS	:=
 MAKE	:= make
 CC	:= cc
 RM	:= rm
-CFLAGS	:= -O2 -g -Wall -fno-strict-aliasing
+CFLAGS	:= -O2 -g
 LDFLAGS	:=
 CMDLINE	:= 0
 export

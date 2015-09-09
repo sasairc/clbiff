@@ -14,7 +14,6 @@
 #define SUBSET_H
 
 #include "./clbiff.h"
-#include <stdio.h>
 
 /* This functions is required subset.c */
 extern char* get_mailbox_env(void);
