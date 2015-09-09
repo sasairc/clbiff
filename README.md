@@ -5,7 +5,7 @@ clbiff
 [![issues](http://img.shields.io/github/issues/sasairc/clbiff.svg?style=flat)](https://github.com/sasairc/clbiff/issues)
 [![build](https://img.shields.io/travis/sasairc/clbiff.svg?style=flat)](https://travis-ci.org/sasairc/clbiff)
 
-新着メールの到着を任意のコマンドにてお知らせします。
+新着メールの到着を任意のコマンドにてお知らせする何かです。
 
 ## install
 ```shellsession
