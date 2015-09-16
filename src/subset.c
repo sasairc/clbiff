@@ -21,32 +21,30 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-char* get_mailbox_env(void)
+char* get_mailbox_env(char* path)
 {
     int     i       = 0;
-    char*   mpath   = NULL,
-        *   inbox   = NULL,
+    char*   inbox   = NULL,
         *   fmt[]   = {INBOX_MBOX, INBOX_MDIR, NULL};
 
     struct  stat    st;
 
-    if ((mpath = getenv("MAIL")) == NULL) {
-    
+    if (path == NULL)
         return NULL;
-    }
 
     for (i = 0; fmt[i] != NULL; i++) {
         if ((inbox = (char*)malloc
-                    (sizeof(char) * (strlen(mpath) + strlen(fmt[i])))
+                    (sizeof(char) * (strlen(path) + strlen(fmt[i])))
                     ) == NULL) {
 
             return NULL;
         } else {
-            strcpy(inbox, mpath);
+            strcpy(inbox, path);
             strcat(inbox, fmt[i]);
         }
         if (stat(inbox, &st) != 0) {
             free(inbox);
+            inbox = NULL;
         } else {
             break;
         }
@@ -59,17 +57,23 @@ int check_file_stat(char* path)
 {
     struct  stat st;
 
+    if (path == NULL) {
+        fprintf(stderr, "%s: mailbox not found, try resetting env $MAIL or use -f options\n",
+                PROGNAME);
+
+        return 1;
+    }
     if (stat(path, &st) != 0) {
         fprintf(stderr, "%s[%d]: %s: no such file or directory\n",
                 PROGNAME, getpid(), path);
 
-        return 1;
+        return 2;
     }
     if (access(path, R_OK) != 0) {
         fprintf(stderr, "%s[%d]: %s: permission denied\n",
                 PROGNAME, getpid(), path);
 
-        return 2;
+        return 3;
     }
 
     return 0;

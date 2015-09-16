@@ -16,7 +16,7 @@
 #include "./clbiff.h"
 
 /* This functions is required subset.c */
-extern char* get_mailbox_env(void);
+extern char* get_mailbox_env(char* path);
 extern int check_file_stat(char* path);
 extern int print_msg(int argnum, ...);
 extern int print_start_msg(clbiff_t* clb);
