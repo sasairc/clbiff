@@ -1,7 +1,7 @@
 /*
  * clbiff -  simple mail notify program
  *
- * subset.h
+ * env.h
  *
  * Copyright (c) 2015 sasairc
  * This work is free. You can redistribute it and/or modify it under the
@@ -10,17 +10,15 @@
  * for more details.
  */
 
-#ifndef SUBSET_H
-#define SUBSET_H
+#ifndef ENV_H
+#define ENV_H
 
-#include "./clbiff.h"
+typedef struct ENV_T {
+    int     envc;
+    char**  envs;
+} env_t;
 
-/* This functions is required subset.c */
-extern char* get_mailbox_env(char* path);
-extern int check_file_stat(char* path);
-extern int print_msg(int argnum, ...);
-extern int print_start_msg(clbiff_t* clb);
-extern int print_usage(void);
-extern int print_version(void);
+extern env_t* split_env(char* env);
+extern void release_env_t(env_t* env);
 
 #endif

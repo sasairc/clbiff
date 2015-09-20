@@ -18,9 +18,14 @@ export
 all install-bin clean:
 	@$(MAKE) -C ./src	$@
 
-install: install-bin
+install-zsh-compdef:
+	@$(MAKE) -C ./compdef	$@
 
-.PHONY: all		\
-	install		\
-	install-bin	\
+install: install-bin		\
+	 install-zsh-compdef	\
+
+.PHONY: all			\
+	install			\
+	install-bin		\
+	install-zsh-compdef	\
 	clean

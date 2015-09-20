@@ -18,6 +18,7 @@
 #include "./file.h"
 #include "./string.h"
 #include "./memory.h"
+#include "./env.h"
 #include <errno.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -122,22 +123,42 @@ int main(int argc, char* argv[])
 
 int init(clbiff_t* cl_t)
 {
+    int     i       = 0;
+    env_t*  envt    = NULL;
+
+    /* setting default interval */
     if (cl_t->iflag == 0) {
         cl_t->iarg = DEFAULT_TMSEC;
     }
-    if (cl_t->fflag == 0 && (cl_t->farg = get_mailbox_env()) == NULL) {
-        fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n",
-                PROGNAME);
 
-        return 1;
+    /* do seach $MAIL on mailbox */
+    if (cl_t->fflag == 0) {
+        if ((envt = split_env(getenv("MAIL"))) == NULL) {
+            fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n",
+                    PROGNAME);
+
+            return 1;
+        }
+
+        do {
+            if ((cl_t->farg = get_mailbox_env(envt->envs[i])) != NULL)
+                break;
+
+            i++;
+        } while (i < envt->envc);
+
+        release_env_t(envt);
     }
     if (check_file_stat(cl_t->farg) != 0) {
 
         return 2;
     }
+
+    /* setting default exec command */
     if (cl_t->cflag == 0) {
         cl_t->carg = DEFAULT_EXEC;
     }
+
     /* str to array */
     if ((cl_t->args = str_to_args(cl_t->carg)) == NULL) { 
 
