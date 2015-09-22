@@ -16,8 +16,8 @@
 #define PROGNAME        "clbiff"
 #define VERSION         0
 #define PATCHLEVEL      6
-#define SUBLEVEL        0
-#define EXTRAVERSION    ""
+#define SUBLEVEL        1
+#define EXTRAVERSION    "-devel"
 
 #define AUTHOR          "sasairc"
 #define MAIL_TO         "sasairc@ssiserver.moe.hm"
