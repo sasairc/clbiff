@@ -13,6 +13,9 @@ clbiff
   # make install PREFIX=/foo/bar
 ```
 
+## zshでの補完
+`$(PREFIX)/share/clbiff/compdef/_clbiff.zsh`を`_clbiff`として、`$fpath`の通ったディレクトリにコピーして下さい。
+
 ## Option
 * `-i, --interval` option  
 	秒単位で時間を確認周期の設定をします。デフォルト値は30秒です。
