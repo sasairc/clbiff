@@ -5,8 +5,6 @@
 TARGET	= clbiff
 PREFIX	:= /usr/local
 BINDIR	:= $(PREFIX)/bin
-INCLUDE :=
-LIBS	:=
 MAKE	:= make
 CC	:= cc
 RM	:= rm
