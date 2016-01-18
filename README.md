@@ -1,5 +1,6 @@
 clbiff
 =====
+
 [![version](http://img.shields.io/github/tag/sasairc/clbiff.svg?style=flat&label=version)](https://github.com/sasairc/clbiff/releases)
 [![license](https://img.shields.io/badge/License-WTFPL2-blue.svg?style=flat)](http://www.wtfpl.net/txt/copying/)
 [![issues](http://img.shields.io/github/issues/sasairc/clbiff.svg?style=flat)](https://github.com/sasairc/clbiff/issues)
@@ -8,15 +9,18 @@ clbiff
 新着メールの到着を任意のコマンドにてお知らせする何かです。
 
 ## install
+
 ```shellsession
-  $ make PREFIX=/foo/bar	# デフォルトでは、PREFIX=/usr/localです
-  # make install PREFIX=/foo/bar
+% make PREFIX=/foo/bar	# デフォルトでは、PREFIX=/usr/localです
+# make install PREFIX=/foo/bar
 ```
 
 ## zshでの補完
+
 `$(PREFIX)/share/clbiff/compdef/_clbiff.zsh`を`_clbiff`として、`$fpath`の通ったディレクトリにコピーして下さい。
 
 ## Option
+
 * `-i, --interval` option  
 	秒単位で時間を確認周期の設定をします。デフォルト値は30秒です。
 * `-f, --file` option  
@@ -35,6 +39,7 @@ clbiff
 	何かが起こる度にメッセージを出力するようにします。（鬱陶しい）
 
 ## Basic Usage
+
 ```shellsession
 % clbiff --file="$HOME/Mail/inbox" --command="yasuna" -i 60 &
 [1] 10367
@@ -50,18 +55,21 @@ clbiff
 ```
 
 ## Additional Usage
+
 ``` shellsession
 % clbiff --file="/mnt/ramdisk/seamonkey/cache2/entries" --command="xterm" -i 1 &
 ```
 お察し下さい
 
 ## Additional Infomation
-`config.h`で規定の動作を変更できます。  
+
+`config.h`で規定の動作を変更できます。	
 使い道は分かりませんが、`WITH_USLEEP`を有効にするとマイクロ秒単位で確認できたり・・・
 	
-
 ## License
+
 [WTFPL version 2](http://www.wtfpl.net/txt/copying/)
 
 ## Author
+
 sasairc (https://github.com/sasairc)

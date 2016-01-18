@@ -16,7 +16,7 @@
 #define PROGNAME        "clbiff"
 #define VERSION         0
 #define PATCHLEVEL      6
-#define SUBLEVEL        0
+#define SUBLEVEL        1
 #define EXTRAVERSION    ""
 
 #define AUTHOR          "sasairc"

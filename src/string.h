@@ -15,7 +15,7 @@
 #define YSTRING_H
 
 #undef  DEBUG
-#undef  WITH_GLIB   /* use glib */
+#undef WITH_GLIB   /* use glib */
 #define LOCALE      ""
 
 /* This functions is required string.c */
@@ -26,5 +26,6 @@ extern int strunesc(char* src);
 extern int strmax(int val, char** src);
 extern int strlftonull(char* str);
 extern char** str_to_args(char* str);
+extern char* mbstrtok(char* str, char* delimiter);
 
 #endif
