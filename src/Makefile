@@ -15,17 +15,17 @@ all: $(TARGET) $(OBJS)
 $(TARGET): $(OBJS)
 ifeq ($(CMDLINE), 0)
 	@echo "  BUILD   $@"
-	@$(CC) $^ -o $@ $(LDFLAGS)
+	@$(CC) $(LDFLAGS) $^ -o $@
 else
-	$(CC) $^ -o $@ $(LDFLAGS)
+	$(CC) $(LDFLAGS) $^ -o $@
 endif
 
 %.o: %.c %.h
 ifeq ($(CMDLINE), 0)
 	@echo "  CC      $@"
-	@$(CC) $(DEFCFLAGS) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@ $(DEFCFLAGS)
 else
-	$(CC) $(DEFCFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@ $(DEFCFLAGS)
 endif
 
 install-bin: $(TARGET)
