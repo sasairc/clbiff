@@ -28,7 +28,7 @@
 #define INBOX_MBOX      "/inbox"    /* support mh */
 #define INBOX_MDIR      "/new"      /* support maildir */
 
-#define WITH_ADD_INFO
+//#define   WITH_ADD_INFO
 #undef  WITH_USLEEP
 #undef  DEBUG
 
