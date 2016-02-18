@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include <unistd.h>
@@ -99,13 +100,22 @@ int check_file_stat(char* path)
 
 int print_msg(int argnum, ...)
 {
-    int     i   = 0;
+    int         i           = 0;
 
-    char*   str = NULL;
+    char        dstr[128]   = {'\0'},
+        *       str         = NULL;
 
-    FILE*   fp  = NULL;
+    FILE*       fp          = NULL;
 
-    va_list list;           /* list of variable arguments */
+    time_t      timer;
+
+    struct tm*  date;
+
+    va_list     list;       /* list of variable arguments */
+
+    timer = time(NULL);
+    date = localtime(&timer);
+    strftime(dstr, 128, "%Y-%m-%d %H:%M:%S %Z", date);
 
     /* processing of variable arguments */
     va_start(list, argnum);
@@ -116,15 +126,15 @@ int print_msg(int argnum, ...)
             case    0:
 #ifdef  WITH_ADD_INFO
                 if (fp == stdout) {
-                    fprintf(fp, "[INFO]: %s[%d]: ",
-                            PROGNAME, getpid());
+                    fprintf(fp, "%s[%d]: %s: [INFO]: ",
+                            PROGNAME, getpid(), dstr);
                 } else if (fp == stderr) {
-                    fprintf(fp, "[WARN]: %s[%d]: ",
-                            PROGNAME, getpid());
+                    fprintf(fp, "%s[%d]: %s: [WARN]: ",
+                            PROGNAME, getpid(), dstr);
                 }
 #else
-                fprintf(fp, "%s[%d]: ",
-                        PROGNAME, getpid());
+                fprintf(fp, "%s[%d]: %s: ",
+                        PROGNAME, getpid(), dstr);
 #endif
                 break;
             default:
