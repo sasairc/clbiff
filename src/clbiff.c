@@ -164,6 +164,9 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
             cl_t->cflag = 1;
             cl_t->carg = val;
         }
+        if ((val = get_polyaness("verbose", i, pt)) != NULL)
+            cl_t->vflag = 1;
+
         i++;
     }
 
