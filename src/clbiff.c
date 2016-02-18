@@ -18,12 +18,11 @@
 #include "./file.h"
 #include "./string.h"
 #include "./memory.h"
+#include "./polyaness.h"
 #include "./env.h"
 #include <errno.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
@@ -33,10 +32,11 @@ int hflag = 0;  /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
-    int     i       = 0,
-            ret     = 0,
-            res     = 0,
-            index   = 0;
+    int             ret     = 0,
+                    res     = 0,
+                    index   = 0;
+
+    polyaness_t*    pt      = NULL;
 
     /* flag and args */
     clbiff_t cl_t = {
@@ -71,14 +71,9 @@ int main(int argc, char* argv[])
     while ((res = getopt_long(argc, argv, "i:f:c:qv", opts, &index)) != -1) {
         switch (res) {
             case    'i':
-                for (i = 0; i < strlen(optarg); i++) {
-                    if (!isdigit(*(optarg + i))) {
-                        fprintf(stderr, "%s: %s: invalid number of interval\n",
-                                PROGNAME, optarg);
+                if (strisdigit(optarg) < 0)
+                    return -1;
 
-                        return -1;
-                    }
-                }
                 cl_t.iflag = 1;
                 cl_t.iarg = atoi(optarg);
                 break;
@@ -105,11 +100,17 @@ int main(int argc, char* argv[])
         }
     }
 
-    /* setting value */
-    if ((ret = init(&cl_t)) != 0) {
+    /* read ~/.clbiffrc */
+    if (read_clbiffrc(&cl_t, &pt) < 0) {
+        release_polyaness(pt);
 
-        return ret;
+        return -1;
     }
+
+    /* setting value */
+    if ((ret = init(&cl_t)) < 0)
+        return 2;
+
     /* verbose message */
     if (cl_t.vflag == 1) {
         print_start_msg(&cl_t);
@@ -118,18 +119,66 @@ int main(int argc, char* argv[])
     handl_zombie_proc();
 
     /* do main loop */
-    return monitor(&cl_t);
+    return monitor(&cl_t, pt);
+}
+
+int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
+{
+    int     i   = 0;
+
+    char*   val = NULL,
+        *   rc  = NULL;
+
+    FILE*   fp  = NULL;
+
+    rc = getenv("HOME");
+    rc = strlion(2, rc, "/.clbiffrc");
+
+    if ((fp = fopen(rc, "r")) == NULL)
+        return 0;
+    else
+        free(rc);
+
+    init_polyaness(fp, 0, pt);
+    if (parse_polyaness(fp, 0, pt) < 0) {
+        fprintf(stderr, "%s: parse_polyaness() failure\n",
+                PROGNAME);
+
+        return -1;
+    }
+    fclose(fp);
+
+    while (i < (*pt)->recs) {
+        if ((val = get_polyaness("interval", i, pt)) != NULL) {
+            if (strisdigit(val) < 0)
+                return -2;
+
+            cl_t->iflag = 1;
+            cl_t->iarg = (int)atoi(val);
+        }
+        if ((val = get_polyaness("file", i, pt)) != NULL) {
+            cl_t->fflag = 1;
+            cl_t->farg = val;
+        }
+        if ((val = get_polyaness("command", i, pt)) != NULL) {
+            cl_t->cflag = 1;
+            cl_t->carg = val;
+        }
+        i++;
+    }
+
+    return 0;
 }
 
 int init(clbiff_t* cl_t)
 {
     int     i       = 0;
+
     env_t*  envt    = NULL;
 
     /* setting default interval */
-    if (cl_t->iflag == 0) {
+    if (cl_t->iflag == 0)
         cl_t->iarg = DEFAULT_TMSEC;
-    }
 
     /* do seach $MAIL on mailbox */
     if (cl_t->fflag == 0) {
@@ -137,7 +186,7 @@ int init(clbiff_t* cl_t)
             fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n",
                     PROGNAME);
 
-            return 1;
+            return -1;
         }
 
         do {
@@ -149,26 +198,21 @@ int init(clbiff_t* cl_t)
 
         release_env_t(envt);
     }
-    if (check_file_stat(cl_t->farg) != 0) {
-
-        return 2;
-    }
+    if (check_file_stat(cl_t->farg) != 0)
+        return -2;
 
     /* setting default exec command */
-    if (cl_t->cflag == 0) {
+    if (cl_t->cflag == 0)
         cl_t->carg = DEFAULT_EXEC;
-    }
 
     /* str to array */
-    if ((cl_t->args = str_to_args(cl_t->carg)) == NULL) { 
-
-        return 3;
-    }
+    if ((cl_t->args = str_to_args(cl_t->carg)) == NULL)
+        return -3;
 
     return 0;
 }
 
-int monitor(clbiff_t* cl_t)
+int monitor(clbiff_t* cl_t, polyaness_t* pt)
 {
     int             e_errno = 0;
 
@@ -178,7 +222,7 @@ int monitor(clbiff_t* cl_t)
     while (hflag == 0) {
         if (stat(cl_t->farg, &stat_now) != 0) {
             print_msg(2, stderr, "stat()failure\n");
-            release(cl_t);
+            release(cl_t, pt);
 
             return errno;
         }
@@ -189,7 +233,7 @@ int monitor(clbiff_t* cl_t)
 #endif
         if (stat(cl_t->farg, &stat_ago) != 0) {
             print_msg(2, stderr, "stat()failure\n");
-            release(cl_t);
+            release(cl_t, pt);
 
             return errno;
         }
@@ -207,7 +251,7 @@ int monitor(clbiff_t* cl_t)
                 PROGNAME, getpid(), hflag);
     }
     /* release memory */
-    release(cl_t);
+    release(cl_t, pt);
 
     return 0;
 }
@@ -243,7 +287,7 @@ void catch_signal(int sig)
     hflag = sig;    /* brak monitor loop */
 }
 
-void release(clbiff_t* cl_t)
+void release(clbiff_t* cl_t, polyaness_t* pt)
 {
 #ifdef  DEBUG
     int i;
@@ -257,6 +301,9 @@ void release(clbiff_t* cl_t)
         fprintf(stderr, "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
                 i, cl_t->args[i], cl_t->args[i]);
 #endif
+
+    if (pt != NULL)
+        release_polyaness(pt);
 
     if (cl_t->fflag == 0 && cl_t->farg != NULL) {
         free(cl_t->farg);

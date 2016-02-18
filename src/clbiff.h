@@ -13,6 +13,8 @@
 #ifndef CLBIFF_H
 #define CLBIFF_H
 
+#include "./polyaness.h"
+
 typedef struct CLBIFF_T {
     int     iflag;
     int     fflag;
@@ -26,10 +28,11 @@ typedef struct CLBIFF_T {
 } clbiff_t;
 
 /* This functions is required clbiff.c */
+extern int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt);
 extern int init(clbiff_t* cl_t);
-extern int monitor(clbiff_t* cl_t);
+extern int monitor(clbiff_t* cl_t, polyaness_t* pt);
 extern int exec_cmd(char** args, int vflag);
 extern void catch_signal(int sig);
-extern void release(clbiff_t* cl_t);
+extern void release(clbiff_t* cl_t, polyaness_t* pt);
 
 #endif
