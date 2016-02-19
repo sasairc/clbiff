@@ -112,9 +112,9 @@ int main(int argc, char* argv[])
         return 2;
 
     /* verbose message */
-    if (cl_t.vflag == 1) {
+    if (cl_t.vflag == 1)
         print_start_msg(&cl_t);
-    }
+
     /* prevention zombie process */
     handl_zombie_proc();
 
@@ -285,7 +285,7 @@ int exec_cmd(char** args, int vflag)
 
 void catch_signal(int sig)
 {
-    hflag = sig;    /* brak monitor loop */
+    hflag = sig;    /* break monitor loop */
 }
 
 void release(clbiff_t* cl_t, polyaness_t* pt)
