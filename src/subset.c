@@ -41,8 +41,9 @@ char* get_mailbox_env(char* path)
 
             return NULL;
         } else {
-            strcpy(inbox, path);
-            strcat(inbox, fmt[i]);
+            memcpy(inbox, path, strlen(path) + 1);
+            memcpy(inbox + strlen(inbox), fmt[i], strlen(fmt[i]));
+            inbox[strlen(inbox)] = '\0';
         }
         if (stat(inbox, &st) != 0) {
             free(inbox);
@@ -125,16 +126,15 @@ int print_msg(int argnum, ...)
         switch (i) {
             case    0:
 #ifdef  WITH_ADD_INFO
-                if (fp == stdout) {
-                    fprintf(fp, "%s[%d]: %s: [INFO]: ",
-                            PROGNAME, getpid(), dstr);
-                } else if (fp == stderr) {
-                    fprintf(fp, "%s[%d]: %s: [WARN]: ",
-                            PROGNAME, getpid(), dstr);
-                }
+                if (fp == stdout)
+                    fprintf(fp, "%s: %s[%d]: [INFO]: ",
+                            dstr, PROGNAME, getpid());
+                else if (fp == stderr)
+                    fprintf(fp, "%s: %s[%d]: [WARN]: ",
+                            dstr, PROGNAME, getpid());
 #else
-                fprintf(fp, "%s[%d]: %s: ",
-                        PROGNAME, getpid(), dstr);
+                fprintf(fp, "%s: %s[%d]: ",
+                        dstr, PROGNAME, getpid());
 #endif
                 break;
             default:
