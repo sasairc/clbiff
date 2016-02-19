@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     if (read_clbiffrc(&cl_t, &pt) < 0) {
         release_polyaness(pt);
 
-        return -1;
+        return 1;
     }
 
     /* setting value */
@@ -131,14 +131,14 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
 
     FILE*   fp  = NULL;
 
-    rc = getenv("HOME");
-    rc = strlion(2, rc, "/.clbiffrc");
-
+    /* read ~/.clbiffrc */
+    rc = strlion(2, getenv("HOME"), "/.clbiffrc");
     if ((fp = fopen(rc, "r")) == NULL)
         return 0;
     else
         free(rc);
 
+    /* parse .clbiffrc */
     init_polyaness(fp, 0, pt);
     if (parse_polyaness(fp, 0, pt) < 0) {
         fprintf(stderr, "%s: parse_polyaness() failure\n",
@@ -148,6 +148,7 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
     }
     fclose(fp);
 
+    /* set values */
     while (i < (*pt)->recs) {
         if ((val = get_polyaness("interval", i, pt)) != NULL) {
             if (strisdigit(val) < 0)
@@ -240,19 +241,16 @@ int monitor(clbiff_t* cl_t, polyaness_t* pt)
 
             return errno;
         }
-        if (stat_now.st_mtime != stat_ago.st_mtime) {
-            if ((e_errno = exec_cmd(cl_t->args, cl_t->vflag)) > 0) {
-
+        if (stat_now.st_mtime != stat_ago.st_mtime)
+            if ((e_errno = exec_cmd(cl_t->args, cl_t->vflag)) > 0)
                 return errno;
-            }
-        }
     }
 
     /* interrupt handling */
-    if (cl_t->vflag) {
+    if (cl_t->vflag)
         fprintf(stdout, "\n%s[%d]: exiting on signal %d\n",
                 PROGNAME, getpid(), hflag);
-    }
+
     /* release memory */
     release(cl_t, pt);
 
@@ -293,7 +291,7 @@ void catch_signal(int sig)
 void release(clbiff_t* cl_t, polyaness_t* pt)
 {
 #ifdef  DEBUG
-    int i;
+    int i   = 0;
 
     fprintf(stderr, "DEBUG: release(): cl_t->farg(%p) = %s\n",
             cl_t->farg, cl_t->farg);
