@@ -24,14 +24,16 @@ typedef struct CLBIFF_T {
     int     iarg;
     char*   farg;
     char*   carg;
-    char**  args;
+    char*** args;
 } clbiff_t;
 
 /* This functions is required clbiff.c */
+extern char*** split_args(char* str);
 extern int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt);
 extern int init(clbiff_t* cl_t);
 extern int monitor(clbiff_t* cl_t, polyaness_t* pt);
-extern int exec_cmd(char** args, int vflag);
+extern int exec_cmd(char*** args, int pos, int vflag, int in_fd);
+extern void redirect(int oldfd, int newfd);
 extern void catch_signal(int sig);
 extern void release(clbiff_t* cl_t, polyaness_t* pt);
 
