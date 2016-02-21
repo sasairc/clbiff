@@ -25,8 +25,10 @@ extern int mbstrlen(char* src);
 extern int strunesc(char* src);
 extern int strmax(int val, char** src);
 extern int strlftonull(char* str);
+extern int strdelsp(char* str);
 extern char** str_to_args(char* str);
 extern char* mbstrtok(char* str, char* delimiter);
+extern int trim(char* str);
 extern int strcmp_lite(const char* str1, const char* str2);
 
 #endif
