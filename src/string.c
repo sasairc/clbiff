@@ -21,7 +21,6 @@
 #ifdef  WITH_GLIB
 #include <glib.h>
 #endif
-#define DEBUG
 
 int strrep(char* src, char* haystack, char* needle)
 {
