@@ -225,24 +225,6 @@ int strlftonull(char* str)
     return ret;
 }
 
-int strdelsp(char* str)
-{
-    int i   = 0,
-        cnt = 0;
-
-    i = strlen(str);
-    while (i >= 0 && isspace(str[i]) > 0)
-        i--;
-    str[i + 1] = '\0';
-
-    i = 0;
-    while (str[i] != '\0' && isspace(str[i]) > 0)
-        i++;
-    strcpy(str, &str[i]);
-
-    return i + cnt;
-}
-
 char** str_to_args(char* str)
 {
     /*
