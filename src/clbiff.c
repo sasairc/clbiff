@@ -21,7 +21,6 @@
 #include "./polyaness.h"
 #include "./env.h"
 #include <errno.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -314,6 +313,9 @@ void redirect(int oldfd, int newfd)
 
 int exec_cmd(char*** args, int pos, int vflag, int in_fd)
 {
+    /*
+     * single
+     */
     if (args[pos + 1] == NULL && pos == 0) {
         switch (fork()) {
             case    -1:
@@ -331,6 +333,9 @@ int exec_cmd(char*** args, int pos, int vflag, int in_fd)
         }
     }
 
+    /*
+     * recursive
+     */
     if (args[pos + 1] == NULL) {
         redirect(in_fd, STDIN_FILENO);
         /* exec proccess */
@@ -341,10 +346,6 @@ int exec_cmd(char*** args, int pos, int vflag, int in_fd)
         exit(errno);
     }
 
-    /*
-     *  pid = 0: child process
-     *  pid > 0: parent process
-     */
     switch (fork()) {
         case    -1:
             print_msg(2, stderr, "fork() on exec_cmd() failure\n");
@@ -356,7 +357,7 @@ int exec_cmd(char*** args, int pos, int vflag, int in_fd)
             return 0;
     }
 
-    int     fd[2]   = {0};
+    int fd[2]   = {0};
 
     /* create pipe */
     if (pipe(fd) < 0) {
@@ -365,10 +366,6 @@ int exec_cmd(char*** args, int pos, int vflag, int in_fd)
         return errno;
     }
 
-    /*
-     *  pid = 0: child process
-     *  pid > 0: parent process
-     */
     switch (fork()) {
         case    -1:
             print_msg(2, stderr, "fork() on exec_cmd() failure\n");
