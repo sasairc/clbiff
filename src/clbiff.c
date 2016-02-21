@@ -404,18 +404,8 @@ void catch_signal(int sig)
 
 void release(clbiff_t* cl_t, polyaness_t* pt)
 {
-#ifdef  DEBUG
-    int i   = 0;
-
-    fprintf(stderr, "DEBUG: release(): cl_t->farg(%p) = %s\n",
-            cl_t->farg, cl_t->farg);
-    fprintf(stderr, "DEBUG: release(): cl_t->args(%p)\n",
-            cl_t->args);
-
-    for (i = 0; i <= p_count_file_lines(cl_t->args); i++)
-        fprintf(stderr, "DEBUG: release(): cl_t->args[%d](%p) = %s\n",
-                i, cl_t->args[i], cl_t->args[i]);
-#endif
+    int i   = 0,
+        j   = 0;
 
     if (pt != NULL)
         release_polyaness(pt);
@@ -424,7 +414,19 @@ void release(clbiff_t* cl_t, polyaness_t* pt)
         free(cl_t->farg);
         cl_t->farg = NULL;
     }
-//  free2d(cl_t->args, p_count_file_lines(cl_t->args));
+
+    if (cl_t->args != NULL) {
+        while (cl_t->args[i] != NULL) {
+            j = 0;
+            while (cl_t->args[i][j] != NULL) {
+                free(cl_t->args[i][j]);
+                j++;
+            }
+            free(cl_t->args[i]);
+            i++;
+        }
+        free(cl_t->args);
+    }
 
     return;
 }
