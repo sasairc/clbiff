@@ -15,8 +15,10 @@
 #include "./clbiff.h"
 #include "./file.h"
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <ctype.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -24,6 +26,7 @@
 char* get_mailbox_env(char* path)
 {
     int     i       = 0;
+
     char*   inbox   = NULL,
         *   fmt[]   = {INBOX_MBOX, INBOX_MDIR, NULL};
 
@@ -33,14 +36,14 @@ char* get_mailbox_env(char* path)
         return NULL;
 
     for (i = 0; fmt[i] != NULL; i++) {
-        if ((inbox = (char*)malloc
-                    (sizeof(char) * (strlen(path) + strlen(fmt[i])))
-                    ) == NULL) {
+        if ((inbox = (char*)
+                    malloc(sizeof(char) * (strlen(path) + strlen(fmt[i])))) == NULL) {
 
             return NULL;
         } else {
-            strcpy(inbox, path);
-            strcat(inbox, fmt[i]);
+            memcpy(inbox, path, strlen(path) + 1);
+            memcpy(inbox + strlen(inbox), fmt[i], strlen(fmt[i]));
+            inbox[strlen(inbox)] = '\0';
         }
         if (stat(inbox, &st) != 0) {
             free(inbox);
@@ -51,6 +54,23 @@ char* get_mailbox_env(char* path)
     }
 
     return inbox;
+}
+
+int strisdigit(char* str)
+{
+    int i   = 0;
+
+    while (i < strlen(str)) {
+        if (!isdigit(*(str + i))) {
+            fprintf(stderr, "%s: %s: invalid number of interval\n",
+                    PROGNAME, str);
+
+            return -1;
+        }
+        i++;
+    }
+
+    return 0;
 }
 
 int check_file_stat(char* path)
@@ -81,10 +101,22 @@ int check_file_stat(char* path)
 
 int print_msg(int argnum, ...)
 {
-    int     i   = 0;
-    char*   str = NULL;
-    FILE*   fp  = NULL;
-    va_list list;           /* list of variable arguments */
+    int         i           = 0;
+
+    char        dstr[128]   = {'\0'},
+        *       str         = NULL;
+
+    FILE*       fp          = NULL;
+
+    time_t      timer;
+
+    struct tm*  date;
+
+    va_list     list;       /* list of variable arguments */
+
+    timer = time(NULL);
+    date = localtime(&timer);
+    strftime(dstr, 128, "%Y-%m-%d %H:%M:%S %Z", date);
 
     /* processing of variable arguments */
     va_start(list, argnum);
@@ -94,16 +126,15 @@ int print_msg(int argnum, ...)
         switch (i) {
             case    0:
 #ifdef  WITH_ADD_INFO
-                if (fp == stdout) {
-                    fprintf(fp, "[INFO]: %s[%d]: ",
-                            PROGNAME, getpid());
-                } else if (fp == stderr) {
-                    fprintf(fp, "[WARN]: %s[%d]: ",
-                            PROGNAME, getpid());
-                }
+                if (fp == stdout)
+                    fprintf(fp, "%s: %s[%d]: [INFO]: ",
+                            dstr, PROGNAME, getpid());
+                else if (fp == stderr)
+                    fprintf(fp, "%s: %s[%d]: [WARN]: ",
+                            dstr, PROGNAME, getpid());
 #else
-                fprintf(fp, "%s[%d]: ",
-                        PROGNAME, getpid());
+                fprintf(fp, "%s: %s[%d]: ",
+                        dstr, PROGNAME, getpid());
 #endif
                 break;
             default:

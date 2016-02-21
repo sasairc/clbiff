@@ -61,6 +61,25 @@ clbiff
 ```
 お察し下さい
 
+## ~/.clbiffrc
+
+`~/.clbiffrc`が存在する場合は、記述された設定が読み込まれます。
+
+```shellsession
+% cat <<EOF > ~/.clbiffrc
+command:yasuna
+file:/mnt/ramdisk/seamonkey/cache2/entries	note:フルパスで記述して下さい。
+interval:1
+verbose:1
+EOF
+% clbiff &
+clbiff 0.7
+pid      = 22453
+file     = /mnt/ramdisk/seamonkey/cache2/entries
+interval = 1 sec
+command  = yasuna
+```
+
 ## Additional Infomation
 
 `config.h`で規定の動作を変更できます。	

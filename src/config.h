@@ -15,8 +15,8 @@
 
 #define PROGNAME        "clbiff"
 #define VERSION         0
-#define PATCHLEVEL      6
-#define SUBLEVEL        1
+#define PATCHLEVEL      7
+#define SUBLEVEL        0
 #define EXTRAVERSION    ""
 
 #define AUTHOR          "sasairc"
@@ -28,7 +28,7 @@
 #define INBOX_MBOX      "/inbox"    /* support mh */
 #define INBOX_MDIR      "/new"      /* support maildir */
 
-#define WITH_ADD_INFO
+#undef  WITH_ADD_INFO
 #undef  WITH_USLEEP
 #undef  DEBUG
 
