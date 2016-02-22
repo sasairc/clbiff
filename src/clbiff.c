@@ -276,7 +276,7 @@ char*** split_args(char* str)
     while (1) {
         if (str[head] == '|' || str[head] == '\0') {
             if ((tmp = (char*)
-                        malloc(sizeof(char) * (head - tail - 1))) == NULL) {
+                        malloc(sizeof(char) * (head - tail))) == NULL) {
                 fprintf(stderr, "%s: malloc() failure\n",
                         PROGNAME);
 
@@ -475,6 +475,7 @@ void release(clbiff_t* cl_t, polyaness_t* pt)
             j = 0;
             while (cl_t->args[i][j] != NULL) {
                 free(cl_t->args[i][j]);
+//              cl_t->args[i][j] = NULL;
                 j++;
             }
             free(cl_t->args[i]);
