@@ -1,0 +1,103 @@
+.TH CLBIFF "1" "2016年2月" "ユーザコマンド"
+.SH 名前
+clbiff \- メールの到着及び、任意のファイルの変更を監視するプログラム。
+.SH 書式
+.B clbiff
+[\fIオプション\fR]...
+.br
+.SH 説明
+.PP
+メールの到着及び、任意のファイルの変更を監視し、指定されたコマンドを実行します。
+.br
+プログラムを終了する際には、SIGINTまたはSIGTERMを送信して下さい。
+.br
+\fI$HOME/.clbiffrc\fRが存在する場合は、以下のコマンドライン引数より優先して解釈されます。
+.br
+長いオプションに必須の引数は短いオプションにも必須です。
+.TP
+\fB\-i\fR, \fB\-\-interval\fR\fI=SECONDS\fR
+\&変更をチェックする周期を指定する
+.br
+\&デフォルトでは30秒毎の確認
+.TP
+\fB\-c\fR, \fB\-\-command\fR\fI=COMMAND\fR
+\&メールの到着または、何らかのファイル変更があった場合に実行するコマンドを指定する
+.br
+\&このオプションには単一コマンドに加えて、パイプ \fB|\fR の使用が可能
+.br
+\&デフォルトでは、光学ドライブを排出する\fIeject(1)\fRを実行する
+.TP
+\fB\-f\fR, \fB-\-file\fR\fI=PATH\fR
+\&監視対象のファイル、またはディレクトリを指定する
+.TP
+\fB\-q\fR, \fB-\-quiet\fR
+\&標準出力へ表示される本プログラムのメッセージを抑制する
+.br
+\&特に指定の無い場合は、このオプションが常に有効
+.TP
+\fB\-v\fR, \fB-\-verbose\fR
+\&本プログラムのメッセージを全て出力する
+.TP
+\fB\-h\fR, \fB-\-help\fR
+\&この使い方を表示して終了する
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+\&バージョン情報を表示して終了する
+
+.SS "終了ステータス:"
+.TP
+0
+正常終了、
+.TP
+1
+シグナルハンドラの登録に失敗、
+.TP
+2
+設定ファイルの読み込みに失敗、
+.TP
+3
+初期化処理に失敗、
+.TP
+255
+引数の解析に失敗（例：無効な引数を渡した）
+.SH "環境変数"
+MAIL   メールボックスのパスを指定する。
+.br
+       ここに指定されたメールボックスがMH形式の場合は\fI$MAIL/inbox\fR
+.br
+       あるいは、Maildir形式の場合は\fI$MAIL/new\fRが、自動的に監視対象になる。
+.SH "設定ファイル"
+.PP
+\fI$HOME/.clbiffrc\fRが存在する場合は、コマンドライン引数より優先して読み込まれる。
+.br
+指定可能な値は以下の通り。
+.br
+
+.br
+command:\fICOMMAND\fR
+.br
+file:\fIPATH\fR
+.br
+interval:\fIINT\fR
+.br
+quiet:
+.br
+verbose:
+.br
+.SH 作者
+sasairc (@sasairc)
+.SH 著作権
+Copyright(c) 2015 sasairc <sasairc@ssiserver.moe.hm>
+.br
+This work is free. You can redistribute it and/or modify it under the
+.br
+terms of the Do What The Fuck You Want To Public License, Version 2,
+.br
+as published by Sam Hocevar.HocevarHocevar See the COPYING file or http://www.wtfpl.net/
+.br
+for more details.
+
+.SH 関連項目
+.B oya
+.B biff
+.B cdbiff
