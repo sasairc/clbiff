@@ -22,6 +22,8 @@
 #include <glib.h>
 #endif
 
+#define DEBUG
+
 int strrep(char* src, char* haystack, char* needle)
 {
     char*   find = NULL;
@@ -235,47 +237,83 @@ char** str_to_args(char* str)
      *  ay   : args array pointer (Y)
      *  elmc : elements counter
      *  dspf : double space flag
+     *  sqtf : single quote flag
+     *  dqtf : double quote flag
      */
     int     i,
             sx, xt, ax, ay,
             elmc,
-            dspf;
-    char**  args;
+            dspf,
+            sqtf,
+            dqtf;
+    char**  args    = NULL;
     
     /* count elements */
-    for (i = dspf = 0, elmc = 1; str[i] != '\0'; i++) {
+    for (i = dspf = sqtf = dqtf = 0, elmc = 1; str[i] != '\0'; i++) {
+        if (str[i] == '\'') {
+            if (sqtf == 0)
+                sqtf = 1;
+            else
+                sqtf = 0;
+        }
+        if (str[i] == '\"') {
+            if (dqtf == 0)
+                dqtf = 1;
+            else
+                dqtf = 0;
+        }
+        if (sqtf == 1 || dqtf == 1)
+            continue;
+
         if (str[i] == ' ' || str[i] == '\t') {
             if (dspf == 1)
                 continue;
-
             elmc++;
-            dspf = 1;
         } else {
             dspf = 0;
         }
     }
-
-    if (elmc >= 1) {
-        args = (char**)malloc(sizeof(char*) * (elmc + 1));
-        if (args == NULL)
+    if (elmc > 0) {
+        if ((args = (char**)
+                    malloc(sizeof(char*) * (elmc + 1))) == NULL)
             return NULL;
     } else {
         return NULL;
     }
 
     /* string to args */
-    for (dspf = sx = ay = ax = xt = 0; sx <= strlen(str); sx++) {
-        if (str[sx] == ' ' || str[sx] == '\t' || str[sx] == '\0') {
+    for (dspf = sqtf = dqtf = sx = ay = ax = xt = 0; sx <= strlen(str); sx++) {
+        if (str[sx] == ' ' || str[sx] == '\t' || str[sx] == '\0' || str[sx] == '\'' || str[sx] == '\"') {
+            if (str[sx] == '\'') {
+                if (sqtf == 0) {
+                    xt++;
+                    sqtf = 1;
+                } else {
+                    sqtf = 0;
+                }
+            }
+            if (str[sx] == '\"') {
+                if (dqtf == 0) {
+                    xt++;
+                    dqtf = 1;
+                } else {
+                    dqtf = 0;
+                }
+            }
+            if (sqtf == 1 || dqtf == 1)
+                continue;
+
             if (dspf == 1) {
                 xt++;
                 continue;
             }
-            if ((args[ay] = (char*)malloc(sizeof(char) * (sx - xt + 1))) == NULL)
+            if ((args[ay] = (char*)
+                        malloc(sizeof(char) * (sx - xt + 1))) == NULL)
                 goto ERR;
 
-            for (ax = 0; xt < sx; xt++, ax++) {
+            for (ax = 0; xt < sx; xt++, ax++)
                     args[ay][ax] = str[xt];
-            }
+
             args[ay][ax] = '\0';
             xt++;
             ay++;
