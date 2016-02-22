@@ -112,12 +112,12 @@ int main(int argc, char* argv[])
     if (read_clbiffrc(&cl_t, &pt) < 0) {
         release_polyaness(pt);
 
-        return 1;
+        return 2;
     }
 
     /* setting value */
     if ((ret = init(&cl_t)) < 0)
-        return 2;
+        return 3;
 
     /* verbose message */
     if (cl_t.vflag == 1)
