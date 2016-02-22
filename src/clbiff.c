@@ -159,6 +159,7 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
     /* set values */
     while (i < (*pt)->recs) {
         if ((val = get_polyaness("interval", i, pt)) != NULL) {
+            trim(val);
             if (strisdigit(val) < 0)
                 return -2;
 
@@ -219,6 +220,7 @@ int init(clbiff_t* cl_t)
 
         release_env_t(envt);
     }
+    trim(cl_t->farg);
 
     /*
      * -f ~/hoge
