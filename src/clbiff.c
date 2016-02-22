@@ -80,7 +80,14 @@ int main(int argc, char* argv[])
                 break;
             case    'f':
                 cl_t.fflag = 1;
-                cl_t.farg = optarg;
+                if ((cl_t.farg = (char*)
+                            malloc(sizeof(char) * (strlen(optarg) + 1))) == NULL) {
+                    fprintf(stderr, "%s: malloc() failure\n",
+                            PROGNAME);
+
+                    return -1;
+                }
+                memcpy(cl_t.farg, optarg, strlen(optarg) + 1);
                 break;
             case    'c':
                 cl_t.cflag = 1;
@@ -160,7 +167,14 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
         }
         if ((val = get_polyaness("file", i, pt)) != NULL) {
             cl_t->fflag = 1;
-            cl_t->farg = val;
+            if ((cl_t->farg = (char*)
+                        malloc(sizeof(char) * (strlen(val) + 1))) == NULL) {
+                fprintf(stderr, "%s: malloc() failure\n",
+                        PROGNAME);
+
+                return - 3;
+            }
+            memcpy(cl_t->farg, val, strlen(val) + 1);
         }
         if ((val = get_polyaness("command", i, pt)) != NULL) {
             cl_t->cflag = 1;
@@ -178,6 +192,8 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
 int init(clbiff_t* cl_t)
 {
     int     i       = 0;
+
+    char*   tmp     = NULL;
 
     env_t*  envt    = NULL;
 
@@ -203,6 +219,24 @@ int init(clbiff_t* cl_t)
 
         release_env_t(envt);
     }
+
+    /*
+     * -f ~/hoge
+     */
+    if (cl_t->farg[0] == '~' && cl_t->farg[1] == '/') {
+        tmp = getenv("HOME");
+        if ((cl_t->farg = (char*)
+                    realloc(cl_t->farg,
+                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp) - 1))) == NULL) {
+            fprintf(stderr, "%s: realloc() failure",
+                    PROGNAME);
+
+            return -1;
+        }
+        memmove(cl_t->farg + strlen(tmp) - 1, cl_t->farg, strlen(cl_t->farg) + 1);
+        memcpy(cl_t->farg, tmp, strlen(tmp));
+    }
+
     if (check_file_stat(cl_t->farg) != 0)
         return -2;
 
@@ -239,8 +273,13 @@ char*** split_args(char* str)
     cnt = head = tail = 0;
     while (1) {
         if (str[head] == '|' || str[head] == '\0') {
-            tmp = (char*)
-                malloc(sizeof(char) * (head - tail - 1));
+            if ((tmp = (char*)
+                        malloc(sizeof(char) * (head - tail - 1))) == NULL) {
+                fprintf(stderr, "%s: malloc() failure\n",
+                        PROGNAME);
+
+                goto ERR;
+            }
 
             memcpy(tmp, str + tail, head - tail);
             tmp[head - tail] = '\0';
@@ -259,6 +298,23 @@ char*** split_args(char* str)
     args[cnt] = NULL;
 
     return args;
+
+ERR:
+
+    if (args != NULL) {
+        while (args[cnt] != NULL) {
+            i = 0;
+            while (args[cnt][i] != NULL) {
+                free(args[cnt][i]);
+                i++;
+            }
+            free(args[cnt]);
+            cnt--;
+        }
+        free(args);
+    }
+
+    return NULL;
 }
 
 int monitor(clbiff_t* cl_t, polyaness_t* pt)
@@ -407,7 +463,7 @@ void release(clbiff_t* cl_t, polyaness_t* pt)
     if (pt != NULL)
         release_polyaness(pt);
 
-    if (cl_t->fflag == 0 && cl_t->farg != NULL) {
+    if (cl_t->farg != NULL) {
         free(cl_t->farg);
         cl_t->farg = NULL;
     }
