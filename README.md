@@ -6,7 +6,8 @@ clbiff
 [![issues](http://img.shields.io/github/issues/sasairc/clbiff.svg?style=flat)](https://github.com/sasairc/clbiff/issues)
 [![build](https://img.shields.io/travis/sasairc/clbiff.svg?style=flat)](https://travis-ci.org/sasairc/clbiff)
 
-新着メールの到着を任意のコマンドにてお知らせする何かです。
+新着メールの到着を任意のコマンドにてお知らせする何か。		
+普通のファイルも監視できます。
 
 ## install
 
@@ -29,7 +30,7 @@ clbiff
 	他環境変数と同様、`:`区切りでの複数記述もサポートしますが、監視対象になるのは優先順位の一番高いディレクトリのみです。
 
 * `-c, --command` option  
-	実行するコマンドを指定します。オプション等は使えますが、パイプは使えません。  
+	実行するコマンドを指定します。オプション及び、複数コマンド間パイプのみのサポートです。		
 	デフォルトではCDドライブを排出する`eject`です。 参考: [cdbiff](http://0xcc.net/cdbiff/)
 
 * `-q, --quiet` option  
@@ -67,8 +68,8 @@ clbiff
 
 ```shellsession
 % cat <<EOF > ~/.clbiffrc
-command:yasuna
-file:/mnt/ramdisk/seamonkey/cache2/entries	note:フルパスで記述して下さい。
+command:yasuna | n_cipher encode | nkf -f80 | clangsay --think
+file:/mnt/ramdisk/seamonkey/cache2/entries
 interval:1
 verbose:1
 EOF
@@ -77,7 +78,7 @@ clbiff 0.7
 pid      = 22453
 file     = /mnt/ramdisk/seamonkey/cache2/entries
 interval = 1 sec
-command  = yasuna
+command  = yasuna | n_cipher encode | nkf -f80 | clangsay --think
 ```
 
 ## Additional Infomation

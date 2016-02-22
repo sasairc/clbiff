@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <ctype.h>
 #include <string.h>
 #include <locale.h>
 
@@ -326,6 +327,30 @@ char* mbstrtok(char* str, char* delimiter)
     }
 
     return str;
+}
+
+int trim(char* str)
+{
+    int i   = 0,
+        j   = 0;
+
+    i = strlen(str) - 1;
+    while (i >= 0 && isspace(*(str + i))) {
+        i--;
+    }
+    *(str + i + 1) = '\0';
+    i = 0;
+    while (isspace(*(str + i)))
+        i++;
+
+    if (i > 0) {
+        j = 0;
+        while (*(str + i))
+            *(str + j++) = *(str + i++);
+        *(str + j) = '\0';
+    }
+
+    return 0;
 }
 
 int strcmp_lite(const char* str1, const char* str2)
