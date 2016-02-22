@@ -229,7 +229,7 @@ int init(clbiff_t* cl_t)
         tmp = getenv("HOME");
         if ((cl_t->farg = (char*)
                     realloc(cl_t->farg,
-                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp) - 1))) == NULL) {
+                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp)))) == NULL) {
             fprintf(stderr, "%s: realloc() failure",
                     PROGNAME);
 
@@ -475,7 +475,7 @@ void release(clbiff_t* cl_t, polyaness_t* pt)
             j = 0;
             while (cl_t->args[i][j] != NULL) {
                 free(cl_t->args[i][j]);
-//              cl_t->args[i][j] = NULL;
+                cl_t->args[i][j] = NULL;
                 j++;
             }
             free(cl_t->args[i]);
