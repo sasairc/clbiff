@@ -31,6 +31,7 @@ clbiff
 
 * `-c, --command` option  
 	実行するコマンドを指定します。オプション及び、複数コマンド間パイプのみのサポートです。		
+	AND等を使用したい場合は、`sh -c "a && b" | c`と指定して下さい。		
 	デフォルトではCDドライブを排出する`eject`です。 参考: [cdbiff](http://0xcc.net/cdbiff/)
 
 * `-q, --quiet` option  
