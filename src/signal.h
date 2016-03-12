@@ -18,9 +18,9 @@ typedef struct SIGLIST_T {
     void    (*func)(int sig);
 } siglist_t;
 
-/* This functions is required signal.c */
 extern int set_signal(int sig, void (*func)(int sig));
 extern int set_signal_siglist(siglist_t* siglist);
 extern void handl_zombie_proc(void);
 
+/* SIGNAL_H */
 #endif
