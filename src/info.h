@@ -16,4 +16,5 @@
 extern int print_usage(void);
 extern int print_version(void);
 
+/* INFO_H */
 #endif
