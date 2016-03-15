@@ -27,6 +27,9 @@ typedef struct CLBIFF_T {
     char*** args;
 } clbiff_t;
 
+#define CLBIFF_ALLNO_FLAG   \
+    0, 0, 0, 0, 0, 0, NULL, NULL, NULL
+
 extern char*** split_args(char* str);
 extern int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt);
 extern int init(clbiff_t* cl_t);

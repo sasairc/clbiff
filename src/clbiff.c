@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
     /* flag and args */
     clbiff_t cl_t = {
-        0, 0, 0, 0, 0, 0, NULL, NULL, NULL,
+        CLBIFF_ALLNO_FLAG,
     };
 
     /* option for getopt_long() */
