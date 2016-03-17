@@ -16,7 +16,6 @@
 #include "./cmd.h"
 #include "./string.h"
 #include "./file.h"
-#include "./memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -580,6 +579,8 @@ void redirect(int oldfd, int newfd)
 
 void release_cmd_t(cmd_t* cmd)
 {
+    int     i   = 0;
+
     cmd_t*  tmp = NULL;
 
     while (cmd != NULL) {
@@ -589,7 +590,12 @@ void release_cmd_t(cmd_t* cmd)
                 free(cmd->io->io_name);
             free(cmd->io);
         }
-        free2d(cmd->args, p_count_file_lines(cmd->args));
+        i = 0;
+        while (cmd->args[i] != NULL) {
+            free(cmd->args[i]);
+            i++;
+        }
+        free(cmd->args);
         free(cmd);
         cmd = tmp;
     }
