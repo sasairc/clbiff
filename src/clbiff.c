@@ -127,9 +127,6 @@ int main(int argc, char* argv[])
     if (cl_t.vflag == 1)
         print_start_msg(&cl_t);
 
-    /* prevention zombie process */
-    handl_zombie_proc();
-
     /* do main loop */
     return monitor(&cl_t, start, pt);
 }
