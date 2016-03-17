@@ -18,7 +18,6 @@
 #include "./signal.h"
 #include "./file.h"
 #include "./string.h"
-#include "./memory.h"
 #include "./polyaness.h"
 #include "./env.h"
 #include <errno.h>
@@ -270,6 +269,7 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
         sleep(cl_t->iarg);
 #else
         usleep(cl_t->iarg);
+/* WITH_USLEEP */
 #endif
         if (stat(cl_t->farg, &stat_ago) != 0) {
             print_msg(2, stderr, "stat()failure\n");

@@ -67,6 +67,7 @@ Report %s bugs to %s <%s>\n\
 
     exit(0);
 }
+/* WITH_USLEEP */
 #endif
 
 int print_version(void)
