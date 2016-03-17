@@ -73,7 +73,7 @@ int strisdigit(char* str)
     return 0;
 }
 
-int check_file_stat(char* path)
+int check_biff_file_stat(char* path)
 {
     struct  stat st;
 
@@ -89,7 +89,7 @@ int check_file_stat(char* path)
 
         return 2;
     }
-    if (access(path, R_OK) != 0) {
+    if ((st.st_mode & S_IREAD) == 0) {
         fprintf(stderr, "%s[%d]: %s: permission denied\n",
                 PROGNAME, getpid(), path);
 
