@@ -10,7 +10,7 @@
  * for more details.
  */
 
-#include "./clbiff.h"
+#include "./config.h"
 #include "./subset.h"
 #include "./config.h"
 #include "./cmd.h"
@@ -383,10 +383,8 @@ int check_file_stat(cmd_t* cmd, int is_redirect, mode_t chk)
     return 0;
 }
 
-int exec_cmd(cmd_t* cmd, int in_fd)
+int exec_cmd(cmd_t* cmd, int ret, int in_fd)
 {
-    static int  ret     = 0;
-
     int         status  = 0,
                 fd[2]   = {0};
 
@@ -446,7 +444,7 @@ int exec_cmd(cmd_t* cmd, int in_fd)
                 if (waitpid(pid, &status, 0) < 0)
                     perror("waitpid");
 
-                ret = WEXITSTATUS(status);
+                ret += WEXITSTATUS(status);
                 if (cmd->next != NULL) {
                     /*
                      * 1. &&
@@ -454,11 +452,33 @@ int exec_cmd(cmd_t* cmd, int in_fd)
                      * 3. ;
                      */
                     if (ret == 0 && cmd->type == TAND)
-                        exec_cmd(cmd->next, STDIN_FILENO);
+                        exec_cmd(cmd->next, ret, STDIN_FILENO);
                     else if (ret != 0 && cmd->type == TOR)
-                        exec_cmd(cmd->next, STDIN_FILENO);
+                        exec_cmd(cmd->next, ret, STDIN_FILENO);
                     else if (cmd->type == TPAREN || cmd->type == TCOM)
-                        exec_cmd(cmd->next, STDIN_FILENO);
+                        exec_cmd(cmd->next, 0, STDIN_FILENO);
+
+                    /*
+                     * 1. a && b && c
+                     * 2. a || b || c
+                     */
+                    if ((cmd->type == TAND && ret != 0) || (cmd->type == TOR && ret == 0)) {
+                        cmd = cmd->next;
+                        switch (cmd->prev->type) {
+                            case    TAND:
+                                while (cmd->next != NULL &&
+                                        (cmd->type == TPIPE || cmd->type == TAND))
+                                    cmd = cmd->next;
+                                break;
+                            case    TOR:
+                                while (cmd->next != NULL &&
+                                        (cmd->type == TPIPE || cmd->type == TOR))
+                                    cmd = cmd->next;
+                                break;
+                        }
+                        if (cmd->next != NULL)
+                            exec_cmd(cmd->next, 0, STDIN_FILENO);
+                    }
                 }
 
                 return ret;
@@ -517,7 +537,7 @@ int exec_cmd(cmd_t* cmd, int in_fd)
                     close(fd[1]);
                     close(in_fd);
                     if (cmd->next != NULL)
-                        exec_cmd(cmd->next, fd[0]);
+                        exec_cmd(cmd->next, ret, fd[0]);
 
                     exit(1);
             }
@@ -527,7 +547,7 @@ int exec_cmd(cmd_t* cmd, int in_fd)
                 while (cmd->next != NULL && cmd->type == TPIPE)
                     cmd = cmd->next;
 
-                ret = WEXITSTATUS(status);
+                ret += WEXITSTATUS(status);
                 if (cmd->next != NULL) {
                     /*
                      * 1. &&
@@ -535,11 +555,33 @@ int exec_cmd(cmd_t* cmd, int in_fd)
                      * 3. ;
                      */
                     if (ret == 0 && cmd->type == TAND)
-                        exec_cmd(cmd->next, STDIN_FILENO);
+                        exec_cmd(cmd->next, ret, STDIN_FILENO);
                     else if (ret != 0 && cmd->type == TOR)
-                        exec_cmd(cmd->next, STDIN_FILENO);
+                        exec_cmd(cmd->next, ret, STDIN_FILENO);
                     else if (cmd->type == TPAREN || cmd->type == TCOM)
-                        exec_cmd(cmd->next, STDIN_FILENO);
+                        exec_cmd(cmd->next, 0, STDIN_FILENO);
+
+                    /*
+                     * 1. a | b && c && d
+                     * 2. a | b || c || d
+                     */
+                    if ((cmd->type == TAND && ret != 0) || (cmd->type == TOR && ret == 0)) {
+                        cmd = cmd->next;
+                        switch (cmd->prev->type) {
+                            case    TAND:
+                                while (cmd->next != NULL &&
+                                        (cmd->type == TPIPE || cmd->type == TAND))
+                                    cmd = cmd->next;
+                                break;
+                            case    TOR:
+                                while (cmd->next != NULL &&
+                                        (cmd->type == TPIPE || cmd->type == TOR))
+                                    cmd = cmd->next;
+                                break;
+                        }
+                        if (cmd->next != NULL)
+                            exec_cmd(cmd->next, 0, STDIN_FILENO);
+                    }
                 }
             } else {
                 exit(0);

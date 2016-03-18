@@ -278,7 +278,7 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
             return errno;
         }
         if (stat_now.st_mtime != stat_ago.st_mtime)
-            exec_cmd(cmd, STDIN_FILENO);
+            exec_cmd(cmd, 0, STDIN_FILENO);
     }
 
     /* interrupt handling */

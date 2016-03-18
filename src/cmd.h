@@ -26,6 +26,10 @@
 
 #include <sys/stat.h>
 
+typedef struct {
+    int     cflag;
+} ysh_t;
+
 typedef struct IO_T {
     short   io_unit;
     short   io_flag;
@@ -46,7 +50,7 @@ extern int set_cmd_val(char* str, int type, cmd_t** cmd);
 extern int parse_cmdline(char* str, cmd_t** dest_cmd, cmd_t** dest_start);
 extern int file_redirect(cmd_t* cmd);
 extern int check_file_stat(cmd_t* cmd, int is_redirect, mode_t chk);
-extern int exec_cmd(cmd_t* cmd, int in_fd);
+extern int exec_cmd(cmd_t* cmd, int ret, int in_fd);
 extern int mwait(void);
 extern void redirect(int oldfd, int newfd);
 extern void release_cmd_t(cmd_t* cmd);
