@@ -15,7 +15,7 @@
 
 #define PROGNAME        "clbiff"
 #define VERSION         0
-#define PATCHLEVEL      8
+#define PATCHLEVEL      9
 #define SUBLEVEL        0
 #define EXTRAVERSION    ""
 
@@ -32,4 +32,5 @@
 #undef  WITH_USLEEP
 #undef  DEBUG
 
+/* CONFIG_H */
 #endif

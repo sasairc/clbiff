@@ -35,7 +35,7 @@ char* get_mailbox_env(char* path)
     if (path == NULL)
         return NULL;
 
-    for (i = 0; fmt[i] != NULL; i++) {
+    while (fmt[i] != NULL) {
         if ((inbox = (char*)
                     malloc(sizeof(char) * (strlen(path) + strlen(fmt[i])))) == NULL) {
 
@@ -51,6 +51,7 @@ char* get_mailbox_env(char* path)
         } else {
             break;
         }
+        i++;
     }
 
     return inbox;
@@ -73,7 +74,7 @@ int strisdigit(char* str)
     return 0;
 }
 
-int check_file_stat(char* path)
+int check_biff_file_stat(char* path)
 {
     struct  stat st;
 
@@ -89,7 +90,7 @@ int check_file_stat(char* path)
 
         return 2;
     }
-    if (access(path, R_OK) != 0) {
+    if ((st.st_mode & S_IREAD) == 0) {
         fprintf(stderr, "%s[%d]: %s: permission denied\n",
                 PROGNAME, getpid(), path);
 
@@ -122,7 +123,7 @@ int print_msg(int argnum, ...)
     va_start(list, argnum);
 
     fp = va_arg(list, FILE*);
-    for(i = 0; i < argnum; i++) {
+    while (i < argnum) {
         switch (i) {
             case    0:
 #ifdef  WITH_ADD_INFO
@@ -135,11 +136,14 @@ int print_msg(int argnum, ...)
 #else
                 fprintf(fp, "%s: %s[%d]: ",
                         dstr, PROGNAME, getpid());
+/* WITH_ADD_INFO */
 #endif
+                i++;
                 break;
             default:
                 str = va_arg(list, char*);
                 fprintf(fp, "%s", str);
+                i++;
                 continue;
         }
     }
@@ -180,4 +184,5 @@ command  = %s\n\
 
     return 0;
 }
+/* WITH_USLEEP */
 #endif
