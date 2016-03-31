@@ -239,7 +239,7 @@ int init(clbiff_t* cl_t, cmd_t** cmd, cmd_t** start)
         memcpy(cl_t->farg, tmp, strlen(tmp));
     }
 
-    if (check_biff_file_stat(cl_t->farg) != 0)
+    if (check_biff_file_stat(cl_t->farg) < 0)
         return -2;
 
     /* setting default exec command */

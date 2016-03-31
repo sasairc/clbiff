@@ -82,19 +82,19 @@ int check_biff_file_stat(char* path)
         fprintf(stderr, "%s: mailbox not found, try resetting env $MAIL or use -f options\n",
                 PROGNAME);
 
-        return 1;
+        return -1;
     }
     if (stat(path, &st) != 0) {
         fprintf(stderr, "%s[%d]: %s: no such file or directory\n",
                 PROGNAME, getpid(), path);
 
-        return 2;
+        return -2;
     }
     if ((st.st_mode & S_IREAD) == 0) {
         fprintf(stderr, "%s[%d]: %s: permission denied\n",
                 PROGNAME, getpid(), path);
 
-        return 3;
+        return -3;
     }
 
     return 0;
