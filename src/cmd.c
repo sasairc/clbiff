@@ -12,7 +12,6 @@
 
 #include "./config.h"
 #include "./subset.h"
-#include "./config.h"
 #include "./cmd.h"
 #include "./string.h"
 #include "./file.h"
