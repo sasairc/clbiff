@@ -16,19 +16,20 @@
 #include "./cmd.h"
 #include "./polyaness.h"
 
+#define MODE_INTERVAL   (1 << 1)
+#define MODE_COMMAND    (1 << 2)
+#define MODE_FILE       (1 << 3)
+#define MODE_VERBOSE    (1 << 4)
+
 typedef struct CLBIFF_T {
-    int     iflag;
-    int     fflag;
-    int     cflag;
-    int     qflag;
-    int     vflag;
+    int     flag;
     int     iarg;
     char*   farg;
     char*   carg;
 } clbiff_t;
 
 #define CLBIFF_ALLNO_FLAG   \
-    0, 0, 0, 0, 0, 0, NULL, NULL
+    0, 0, NULL, NULL
 
 extern int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt);
 extern int init(clbiff_t* cl_t, cmd_t** cmd, cmd_t** start);

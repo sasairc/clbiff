@@ -1,7 +1,7 @@
 /*
  * clbiff -  simple mail notify program
  *
- * signal.h 
+ * memory.h
  *
  * Copyright (c) 2015 sasairc
  * This work is free. You can redistribute it and/or modify it under the
@@ -10,25 +10,23 @@
  * for more details.
  */
 
-#ifndef SIGNAL_H
-#define SIGNAL_H
+#ifndef MEMORY_H
+#define MEMORY_H
 #ifdef  __cplusplus
 extern "C" {
 /* __cplusplus */
 #endif
 
-typedef struct SIGLIST_T {
-    int     sig;
-    void    (*func)(int sig);
-} siglist_t;
+#include <stddef.h>
+#include <stdarg.h>
 
-extern int set_signal(int sig, void (*func)(int sig));
-extern int set_signal_siglist(siglist_t* siglist);
-extern void handl_zombie_proc(void);
+extern void* smalloc(size_t size, const char* fmt, ...);
+extern void* srealloc(void* ptr, size_t size, const char* fmt, ...);
+extern void free2d(char** buf, int y);
 
 #ifdef  __cplusplus
 }
 /* __cplusplus */
 #endif
-/* SIGNAL_H */
+/* MEMORY_H */
 #endif

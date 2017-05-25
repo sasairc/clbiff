@@ -35,15 +35,15 @@ char* get_mailbox_env(char* path)
     if (path == NULL)
         return NULL;
 
-    while (fmt[i] != NULL) {
+    while (*(fmt + i) != NULL) {
         if ((inbox = (char*)
-                    malloc(sizeof(char) * (strlen(path) + strlen(fmt[i])))) == NULL) {
+                    malloc(sizeof(char) * (strlen(path) + strlen(*(fmt + i))))) == NULL) {
 
             return NULL;
         } else {
             memcpy(inbox, path, strlen(path) + 1);
-            memcpy(inbox + strlen(inbox), fmt[i], strlen(fmt[i]));
-            inbox[strlen(inbox)] = '\0';
+            memcpy(inbox + strlen(inbox), *(fmt + i), strlen(*(fmt + i)));
+            *(inbox + strlen(inbox)) = '\0';
         }
         if (stat(inbox, &st) != 0) {
             free(inbox);
@@ -55,23 +55,6 @@ char* get_mailbox_env(char* path)
     }
 
     return inbox;
-}
-
-int strisdigit(char* str)
-{
-    int i   = 0;
-
-    while (i < strlen(str)) {
-        if (!isdigit(*(str + i))) {
-            fprintf(stderr, "%s: %s: invalid number of interval\n",
-                    PROGNAME, str);
-
-            return -1;
-        }
-        i++;
-    }
-
-    return 0;
 }
 
 int check_biff_file_stat(char* path)
