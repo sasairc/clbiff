@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/stat.h>
 
 char* get_mailbox_env(char* path)
@@ -38,7 +39,8 @@ char* get_mailbox_env(char* path)
 
     while (*(fmt + i) != NULL) {
         if ((inbox = (char*)
-                    smalloc(sizeof(char) * (strlen(path) + strlen(*(fmt + i))), NULL)) == NULL)
+                    smalloc(sizeof(char) * (strlen(path) + strlen(*(fmt + i))),
+                        NULL)) == NULL)
             return NULL;
 
         memcpy(inbox, path, strlen(path) + 1);
@@ -68,14 +70,14 @@ int check_biff_file_stat(char* path)
         return -1;
     }
     if (stat(path, &st) != 0) {
-        fprintf(stderr, "%s[%d]: %s: no such file or directory\n",
-                PROGNAME, getpid(), path);
+        fprintf(stderr, "%s[%d]: %s: %s\n",
+                PROGNAME, getpid(), path, strerror(ENOENT));
 
         return -2;
     }
     if ((st.st_mode & S_IREAD) == 0) {
-        fprintf(stderr, "%s[%d]: %s: permission denied\n",
-                PROGNAME, getpid(), path);
+        fprintf(stderr, "%s[%d]: %s: %s\n",
+                PROGNAME, getpid(), path, strerror(EACCES));
 
         return -3;
     }

@@ -30,7 +30,7 @@
 #include <signal.h>
 #include <sys/stat.h>
 
-int hflag   = 0;    /* monitor() loop flag */
+short hflag = 0;    /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
@@ -168,7 +168,8 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
         if ((val = get_polyaness("file", i, pt)) != NULL) {
             cl_t->flag |= MODE_FILE;
             if ((cl_t->farg = (char*)
-                        smalloc(sizeof(char) * (strlen(val) + 1), NULL)) == NULL)
+                        smalloc(sizeof(char) * (strlen(val) + 1),
+                            NULL)) == NULL)
                 return -3;
 
             memcpy(cl_t->farg, val, strlen(val) + 1);
@@ -225,7 +226,8 @@ int init(clbiff_t* cl_t, cmd_t** cmd, cmd_t** start)
         tmp = getenv("HOME");
         if ((cl_t->farg = (char*)
                     srealloc(cl_t->farg,
-                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp)), NULL)) == NULL)
+                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp)),
+                        NULL)) == NULL)
             return -1;
         
         memmove(cl_t->farg + strlen(tmp) - 1, cl_t->farg, strlen(cl_t->farg) + 1);
@@ -253,10 +255,9 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
 
     while (hflag == 0) {
         if (stat(cl_t->farg, &stat_now) != 0) {
-            print_msg(2, stderr, "stat()failure\n");
-            release(cl_t, cmd, pt);
+            print_msg(4, stderr, "stat(): ", strerror(errno), "\n");
 
-            return errno;
+            goto ERR;
         }
 #ifndef WITH_USLEEP
         sleep(cl_t->iarg);
@@ -265,10 +266,9 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
 /* WITH_USLEEP */
 #endif
         if (stat(cl_t->farg, &stat_ago) != 0) {
-            print_msg(2, stderr, "stat()failure\n");
-            release(cl_t, cmd, pt);
+            print_msg(4, stderr, "stat(): ", strerror(errno), "\n");
 
-            return errno;
+            goto ERR;
         }
         if (stat_now.st_mtime != stat_ago.st_mtime)
             exec_cmd(cmd, 0, STDIN_FILENO);
@@ -283,6 +283,11 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
     release(cl_t, cmd, pt);
 
     return 0;
+
+ERR:
+    release(cl_t, cmd, pt);
+
+    return errno;
 }
 
 void catch_signal(int sig)
