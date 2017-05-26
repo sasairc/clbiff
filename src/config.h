@@ -15,7 +15,7 @@
 
 #define PROGNAME        "clbiff"
 #define VERSION         0
-#define PATCHLEVEL      9
+#define PATCHLEVEL      10
 #define SUBLEVEL        0
 #define EXTRAVERSION    ""
 

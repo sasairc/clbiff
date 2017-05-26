@@ -14,6 +14,7 @@
 #include "./config.h"
 #include "./clbiff.h"
 #include "./file.h"
+#include "./memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +22,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/stat.h>
 
 char* get_mailbox_env(char* path)
@@ -35,16 +37,16 @@ char* get_mailbox_env(char* path)
     if (path == NULL)
         return NULL;
 
-    while (fmt[i] != NULL) {
+    while (*(fmt + i) != NULL) {
         if ((inbox = (char*)
-                    malloc(sizeof(char) * (strlen(path) + strlen(fmt[i])))) == NULL) {
-
+                    smalloc(sizeof(char) * (strlen(path) + strlen(*(fmt + i))),
+                        NULL)) == NULL)
             return NULL;
-        } else {
-            memcpy(inbox, path, strlen(path) + 1);
-            memcpy(inbox + strlen(inbox), fmt[i], strlen(fmt[i]));
-            inbox[strlen(inbox)] = '\0';
-        }
+
+        memcpy(inbox, path, strlen(path) + 1);
+        memcpy(inbox + strlen(inbox), *(fmt + i), strlen(*(fmt + i)));
+        *(inbox + strlen(inbox)) = '\0';
+
         if (stat(inbox, &st) != 0) {
             free(inbox);
             inbox = NULL;
@@ -57,23 +59,6 @@ char* get_mailbox_env(char* path)
     return inbox;
 }
 
-int strisdigit(char* str)
-{
-    int i   = 0;
-
-    while (i < strlen(str)) {
-        if (!isdigit(*(str + i))) {
-            fprintf(stderr, "%s: %s: invalid number of interval\n",
-                    PROGNAME, str);
-
-            return -1;
-        }
-        i++;
-    }
-
-    return 0;
-}
-
 int check_biff_file_stat(char* path)
 {
     struct  stat st;
@@ -82,19 +67,19 @@ int check_biff_file_stat(char* path)
         fprintf(stderr, "%s: mailbox not found, try resetting env $MAIL or use -f options\n",
                 PROGNAME);
 
-        return 1;
+        return -1;
     }
     if (stat(path, &st) != 0) {
-        fprintf(stderr, "%s[%d]: %s: no such file or directory\n",
-                PROGNAME, getpid(), path);
+        fprintf(stderr, "%s[%d]: %s: %s\n",
+                PROGNAME, getpid(), path, strerror(ENOENT));
 
-        return 2;
+        return -2;
     }
     if ((st.st_mode & S_IREAD) == 0) {
-        fprintf(stderr, "%s[%d]: %s: permission denied\n",
-                PROGNAME, getpid(), path);
+        fprintf(stderr, "%s[%d]: %s: %s\n",
+                PROGNAME, getpid(), path, strerror(EACCES));
 
-        return 3;
+        return -3;
     }
 
     return 0;

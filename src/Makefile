@@ -7,6 +7,7 @@ OBJS	= $(SRCS:.c=.o)
 ARCH	= $(shell gcc -print-multiarch)
 
 DEFCFLAGS = -DARCH=\"$(ARCH)\" \
+	    -DLOCALE=\"\"      \
 		$(INCLUDE)     \
 		$(LIBS)
 

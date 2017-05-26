@@ -18,6 +18,7 @@
 #include "./signal.h"
 #include "./file.h"
 #include "./string.h"
+#include "./memory.h"
 #include "./polyaness.h"
 #include "./env.h"
 #include <errno.h>
@@ -29,7 +30,7 @@
 #include <signal.h>
 #include <sys/stat.h>
 
-int hflag   = 0;    /* monitor() loop flag */
+short hflag = 0;    /* monitor() loop flag */
 
 int main(int argc, char* argv[])
 {
@@ -78,29 +79,26 @@ int main(int argc, char* argv[])
                 if (strisdigit(optarg) < 0)
                     return -1;
 
-                cl_t.iflag = 1;
+                cl_t.flag |= MODE_INTERVAL;
                 cl_t.iarg = atoi(optarg);
                 break;
             case    'f':
-                cl_t.fflag = 1;
+                cl_t.flag |= MODE_FILE;
                 if ((cl_t.farg = (char*)
-                            malloc(sizeof(char) * (strlen(optarg) + 1))) == NULL) {
-                    fprintf(stderr, "%s: malloc() failure\n",
-                            PROGNAME);
-
+                            smalloc(sizeof(char) * (strlen(optarg) + 1), NULL)) == NULL)
                     return -1;
-                }
+
                 memcpy(cl_t.farg, optarg, strlen(optarg) + 1);
                 break;
             case    'c':
-                cl_t.cflag = 1;
+                cl_t.flag |= MODE_COMMAND;
                 cl_t.carg = optarg;
                 break;
             case    'q':
-                cl_t.qflag = 1;
+                cl_t.flag &= ~MODE_VERBOSE;
                 break;
             case    'v':
-                cl_t.vflag = 1;
+                cl_t.flag |= MODE_VERBOSE;
                 break;
             case    0:
                 print_usage();
@@ -123,7 +121,7 @@ int main(int argc, char* argv[])
         return 3;
 
     /* verbose message */
-    if (cl_t.vflag == 1)
+    if (cl_t.flag & MODE_VERBOSE)
         print_start_msg(&cl_t);
 
     /* do main loop */
@@ -155,6 +153,7 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
         return -1;
     }
     fclose(fp);
+    fp = NULL;
 
     /* set values */
     while (i < (*pt)->recs) {
@@ -163,26 +162,24 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
             if (strisdigit(val) < 0)
                 return -2;
 
-            cl_t->iflag = 1;
+            cl_t->flag |= MODE_INTERVAL;
             cl_t->iarg = (int)atoi(val);
         }
         if ((val = get_polyaness("file", i, pt)) != NULL) {
-            cl_t->fflag = 1;
+            cl_t->flag |= MODE_FILE;
             if ((cl_t->farg = (char*)
-                        malloc(sizeof(char) * (strlen(val) + 1))) == NULL) {
-                fprintf(stderr, "%s: malloc() failure\n",
-                        PROGNAME);
+                        smalloc(sizeof(char) * (strlen(val) + 1),
+                            NULL)) == NULL)
+                return -3;
 
-                return - 3;
-            }
             memcpy(cl_t->farg, val, strlen(val) + 1);
         }
         if ((val = get_polyaness("command", i, pt)) != NULL) {
-            cl_t->cflag = 1;
+            cl_t->flag |= MODE_COMMAND;
             cl_t->carg = val;
         }
         if ((val = get_polyaness("verbose", i, pt)) != NULL)
-            cl_t->vflag = 1;
+            cl_t->flag |= MODE_VERBOSE;
 
         i++;
     }
@@ -199,12 +196,12 @@ int init(clbiff_t* cl_t, cmd_t** cmd, cmd_t** start)
     env_t*  envt    = NULL;
 
     /* setting default interval */
-    if (cl_t->iflag == 0)
+    if (!(cl_t->flag & MODE_INTERVAL))
         cl_t->iarg = DEFAULT_TMSEC;
 
     /* do seach $MAIL on mailbox */
-    if (cl_t->fflag == 0) {
-        if ((envt = split_env(getenv("MAIL"))) == NULL) {
+    if (!(cl_t->flag & MODE_FILE)) {
+        if (split_env(getenv("MAIL"), &envt) < 0) {
             fprintf(stderr, "%s: mailbox not found, try setting env $MAIL or use -f options\n",
                     PROGNAME);
 
@@ -212,7 +209,7 @@ int init(clbiff_t* cl_t, cmd_t** cmd, cmd_t** start)
         }
 
         do {
-            if ((cl_t->farg = get_mailbox_env(envt->envs[i])) != NULL)
+            if ((cl_t->farg = get_mailbox_env(*(envt->envs + i))) != NULL)
                 break;
 
             i++;
@@ -225,25 +222,23 @@ int init(clbiff_t* cl_t, cmd_t** cmd, cmd_t** start)
     /*
      * -f ~/hoge
      */
-    if (cl_t->farg[0] == '~' && cl_t->farg[1] == '/') {
+    if (*cl_t->farg == '~' && *(cl_t->farg + 1) == '/') {
         tmp = getenv("HOME");
         if ((cl_t->farg = (char*)
-                    realloc(cl_t->farg,
-                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp)))) == NULL) {
-            fprintf(stderr, "%s: realloc() failure",
-                    PROGNAME);
-
+                    srealloc(cl_t->farg,
+                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp)),
+                        NULL)) == NULL)
             return -1;
-        }
+        
         memmove(cl_t->farg + strlen(tmp) - 1, cl_t->farg, strlen(cl_t->farg) + 1);
         memcpy(cl_t->farg, tmp, strlen(tmp));
     }
 
-    if (check_biff_file_stat(cl_t->farg) != 0)
+    if (check_biff_file_stat(cl_t->farg) < 0)
         return -2;
 
     /* setting default exec command */
-    if (cl_t->cflag == 0)
+    if (!(cl_t->flag & MODE_COMMAND))
         cl_t->carg = DEFAULT_EXEC;
 
     /* str to array */
@@ -260,10 +255,9 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
 
     while (hflag == 0) {
         if (stat(cl_t->farg, &stat_now) != 0) {
-            print_msg(2, stderr, "stat()failure\n");
-            release(cl_t, cmd, pt);
+            print_msg(4, stderr, "stat(): ", strerror(errno), "\n");
 
-            return errno;
+            goto ERR;
         }
 #ifndef WITH_USLEEP
         sleep(cl_t->iarg);
@@ -272,17 +266,16 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
 /* WITH_USLEEP */
 #endif
         if (stat(cl_t->farg, &stat_ago) != 0) {
-            print_msg(2, stderr, "stat()failure\n");
-            release(cl_t, cmd, pt);
+            print_msg(4, stderr, "stat(): ", strerror(errno), "\n");
 
-            return errno;
+            goto ERR;
         }
         if (stat_now.st_mtime != stat_ago.st_mtime)
             exec_cmd(cmd, 0, STDIN_FILENO);
     }
 
     /* interrupt handling */
-    if (cl_t->vflag)
+    if (cl_t->flag & MODE_VERBOSE)
         fprintf(stdout, "\n%s[%d]: exiting on signal %d\n",
                 PROGNAME, getpid(), hflag);
 
@@ -290,6 +283,11 @@ int monitor(clbiff_t* cl_t, cmd_t* cmd, polyaness_t* pt)
     release(cl_t, cmd, pt);
 
     return 0;
+
+ERR:
+    release(cl_t, cmd, pt);
+
+    return errno;
 }
 
 void catch_signal(int sig)

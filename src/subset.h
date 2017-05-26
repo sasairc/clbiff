@@ -16,7 +16,6 @@
 #include "./clbiff.h"
 
 extern char* get_mailbox_env(char* path);
-extern int strisdigit(char* str);
 extern int check_biff_file_stat(char* path);
 extern int print_msg(int argnum, ...);
 extern int print_start_msg(clbiff_t* clb);
