@@ -18,6 +18,7 @@
 #include "./signal.h"
 #include "./file.h"
 #include "./string.h"
+#include "./memory.h"
 #include "./polyaness.h"
 #include "./env.h"
 #include <errno.h>
@@ -84,12 +85,9 @@ int main(int argc, char* argv[])
             case    'f':
                 cl_t.flag |= MODE_FILE;
                 if ((cl_t.farg = (char*)
-                            malloc(sizeof(char) * (strlen(optarg) + 1))) == NULL) {
-                    fprintf(stderr, "%s: malloc() failure\n",
-                            PROGNAME);
-
+                            smalloc(sizeof(char) * (strlen(optarg) + 1), NULL)) == NULL)
                     return -1;
-                }
+
                 memcpy(cl_t.farg, optarg, strlen(optarg) + 1);
                 break;
             case    'c':
@@ -155,6 +153,7 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
         return -1;
     }
     fclose(fp);
+    fp = NULL;
 
     /* set values */
     while (i < (*pt)->recs) {
@@ -169,12 +168,9 @@ int read_clbiffrc(clbiff_t* cl_t, polyaness_t** pt)
         if ((val = get_polyaness("file", i, pt)) != NULL) {
             cl_t->flag |= MODE_FILE;
             if ((cl_t->farg = (char*)
-                        malloc(sizeof(char) * (strlen(val) + 1))) == NULL) {
-                fprintf(stderr, "%s: malloc() failure\n",
-                        PROGNAME);
+                        smalloc(sizeof(char) * (strlen(val) + 1), NULL)) == NULL)
+                return -3;
 
-                return - 3;
-            }
             memcpy(cl_t->farg, val, strlen(val) + 1);
         }
         if ((val = get_polyaness("command", i, pt)) != NULL) {
@@ -228,13 +224,10 @@ int init(clbiff_t* cl_t, cmd_t** cmd, cmd_t** start)
     if (*cl_t->farg == '~' && *(cl_t->farg + 1) == '/') {
         tmp = getenv("HOME");
         if ((cl_t->farg = (char*)
-                    realloc(cl_t->farg,
-                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp)))) == NULL) {
-            fprintf(stderr, "%s: realloc() failure",
-                    PROGNAME);
-
+                    srealloc(cl_t->farg,
+                        sizeof(char) * (strlen(cl_t->farg) + strlen(tmp)), NULL)) == NULL)
             return -1;
-        }
+        
         memmove(cl_t->farg + strlen(tmp) - 1, cl_t->farg, strlen(cl_t->farg) + 1);
         memcpy(cl_t->farg, tmp, strlen(tmp));
     }

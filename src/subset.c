@@ -14,6 +14,7 @@
 #include "./config.h"
 #include "./clbiff.h"
 #include "./file.h"
+#include "./memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,14 +38,13 @@ char* get_mailbox_env(char* path)
 
     while (*(fmt + i) != NULL) {
         if ((inbox = (char*)
-                    malloc(sizeof(char) * (strlen(path) + strlen(*(fmt + i))))) == NULL) {
-
+                    smalloc(sizeof(char) * (strlen(path) + strlen(*(fmt + i))), NULL)) == NULL)
             return NULL;
-        } else {
-            memcpy(inbox, path, strlen(path) + 1);
-            memcpy(inbox + strlen(inbox), *(fmt + i), strlen(*(fmt + i)));
-            *(inbox + strlen(inbox)) = '\0';
-        }
+
+        memcpy(inbox, path, strlen(path) + 1);
+        memcpy(inbox + strlen(inbox), *(fmt + i), strlen(*(fmt + i)));
+        *(inbox + strlen(inbox)) = '\0';
+
         if (stat(inbox, &st) != 0) {
             free(inbox);
             inbox = NULL;
