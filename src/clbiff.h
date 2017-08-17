@@ -13,8 +13,8 @@
 #ifndef CLBIFF_H
 #define CLBIFF_H
 
-#include "./cmd.h"
-#include "./polyaness.h"
+#include "./libbenly/src/cmd.h"
+#include "./libpolyaness/src/polyaness.h"
 
 #define MODE_INTERVAL   (1 << 1)
 #define MODE_COMMAND    (1 << 2)

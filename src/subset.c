@@ -13,8 +13,8 @@
 #include "./subset.h"
 #include "./config.h"
 #include "./clbiff.h"
-#include "./file.h"
-#include "./memory.h"
+#include "./libbenly/src/file.h"
+#include "./libbenly/src/memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

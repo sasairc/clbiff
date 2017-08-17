@@ -15,7 +15,7 @@ LDFLAGS	:=
 CMDLINE	:= 0
 export
 
-all install-bin clean:
+all build-dep clean-dep install-bin clean:
 	@$(MAKE) -C ./src	$@
 
 install-man:
@@ -33,6 +33,8 @@ install: install-bin		\
 	 install-zsh-compdef	\
 
 .PHONY: all			\
+	build-dep		\
+	clean-dep		\
 	install			\
 	install-bin		\
 	install-man		\
