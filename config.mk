@@ -1,0 +1,11 @@
+#
+#    Makefile for yasuna
+#
+
+WITH_SHARED	= 0
+WITH_ADD_INFO	= 1
+WITH_USLEEP	= 0
+DEFAULT_TMSEC	= 30
+DEFAULT_EXEC	= eject
+INBOX_MBOX	=
+INBOX_MDIR	=

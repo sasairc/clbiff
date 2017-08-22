@@ -22,14 +22,23 @@
 #define AUTHOR          "sasairc"
 #define MAIL_TO         "sasairc@ssiserver.moe.hm"
 
+#ifndef DEFAULT_TMSEC
 #define DEFAULT_TMSEC   30
+/* DEFAULT_TMSEC */
+#endif
+#ifndef DEFAULT_EXEC
 #define DEFAULT_EXEC    "eject"
-
+/* DEFAULT_EXEC */
+#endif
+#ifndef INBOX_MBOX
 #define INBOX_MBOX      "/inbox"    /* support mh */
+/* INBOX_MBOX */
+#endif
+#ifndef INBOX_MDIR
 #define INBOX_MDIR      "/new"      /* support maildir */
+/* INBOX_MDIR */
+#endif
 
-#undef  WITH_ADD_INFO
-#undef  WITH_USLEEP
 #undef  DEBUG
 
 /* CONFIG_H */

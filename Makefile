@@ -10,7 +10,7 @@ DOCDIR	:= $(PREFIX)/share/doc/clbiff
 MAKE	:= make
 CC	:= cc
 RM	:= rm
-CFLAGS	:= -O2 -g
+CFLAGS	:= -Wall -O2 -g
 LDFLAGS	:=
 CMDLINE	:= 0
 export
@@ -36,6 +36,7 @@ install: install-bin		\
 	build-dep		\
 	clean-dep		\
 	install			\
+	install-dep		\
 	install-bin		\
 	install-man		\
 	install-doc		\

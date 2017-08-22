@@ -13,8 +13,6 @@
 #include "./subset.h"
 #include "./config.h"
 #include "./clbiff.h"
-#include "./libbenly/src/file.h"
-#include "./libbenly/src/memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +22,15 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
+
+#ifdef  WITH_SHARED
+#include <benly/file.h>
+#include <benly/memory.h>
+#else
+#include "./libbenly/src/file.h"
+#include "./libbenly/src/memory.h"
+/* WITH_SHARED */
+#endif
 
 char* get_mailbox_env(char* path)
 {

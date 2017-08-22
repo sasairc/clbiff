@@ -13,8 +13,14 @@
 #ifndef CLBIFF_H
 #define CLBIFF_H
 
+#ifdef  WITH_SHARED
+#include <benly/cmd.h>
+#include <polyaness.h>
+#else
 #include "./libbenly/src/cmd.h"
 #include "./libpolyaness/src/polyaness.h"
+/* WITH_SHARED */
+#endif
 
 #define MODE_INTERVAL   (1 << 1)
 #define MODE_COMMAND    (1 << 2)

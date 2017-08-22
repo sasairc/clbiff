@@ -14,13 +14,6 @@
 #include "./clbiff.h"
 #include "./subset.h"
 #include "./info.h"
-#include "./libbenly/src/cmd.h"
-#include "./libbenly/src/signal.h"
-#include "./libbenly/src/file.h"
-#include "./libbenly/src/string.h"
-#include "./libbenly/src/memory.h"
-#include "./libbenly/src/env.h"
-#include "./libpolyaness/src/polyaness.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +22,25 @@
 #include <getopt.h>
 #include <signal.h>
 #include <sys/stat.h>
+
+#ifdef  WITH_SHARED
+#include <benly/cmd.h>
+#include <benly/env.h>
+#include <benly/signal.h>
+#include <benly/string.h>
+#include <benly/file.h>
+#include <benly/memory.h>
+#include <polyaness.h>
+#else
+#include "./libbenly/src/env.h"
+#include "./libbenly/src/cmd.h"
+#include "./libbenly/src/signal.h"
+#include "./libbenly/src/string.h"
+#include "./libbenly/src/file.h"
+#include "./libbenly/src/memory.h"
+#include "./libpolyaness/src/polyaness.h"
+/* WITH_SHARED */
+#endif
 
 short hflag = 0;    /* monitor() loop flag */
 
